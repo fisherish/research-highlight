@@ -1,6 +1,6 @@
 {
   "name": "research-highlight-ai",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "description": "Research Highlight AI for Zotero: structured AI enrichment for literature highlights.",
   "license": "Apache-2.0",
