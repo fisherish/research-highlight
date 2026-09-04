@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Research Highlight</title>
+  <desc id="desc">A highlighted research document beside a compact data chart.</desc>
+  <defs>
+    <linearGradient id="bg" x1="80" y1="60" x2="430" y2="450" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6257A8"/>
+      <stop offset="0.52" stop-color="#3A356F"/>
+      <stop offset="1" stop-color="#24213F"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="150" y1="105" x2="305" y2="390" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#ECECF4"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="318" y1="230" x2="406" y2="360" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#B3A5FF"/>
+      <stop offset="1" stop-color="#7467D9"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="44" y="44" width="424" height="424" rx="94" fill="url(#bg)"/>
+  <rect x="58" y="58" width="396" height="396" rx="82" fill="none" stroke="#8C86C2" stroke-width="4" opacity="0.55"/>
+
+  <path d="M114 124c0-18 14-32 32-32h154v213c0 35-18 68-48 87l-138 28V124z" fill="url(#paper)"/>
+  <path d="M114 124l54-32v58c0 13-11 24-24 24h-30v-50z" fill="#D9D9E8"/>
+  <path d="M114 124l54-32v48c0 13-11 24-24 24h-30" fill="#F7F7FC"/>
+
+  <rect x="142" y="188" width="126" height="14" rx="7" fill="#A7A8BB"/>
+  <rect x="142" y="224" width="116" height="34" rx="11" fill="#FFB000"/>
+  <rect x="152" y="233" width="96" height="16" rx="7" fill="#FFD161"/>
+  <rect x="142" y="282" width="96" height="14" rx="7" fill="#B2B3C4"/>
+
+  <line x1="315" y1="365" x2="422" y2="365" stroke="#B8B4DD" stroke-width="10" stroke-linecap="round"/>
+  <rect x="326" y="300" width="25" height="65" rx="8" fill="#8E87C9"/>
+  <rect x="365" y="266" width="25" height="99" rx="8" fill="url(#bar)"/>
+  <rect x="404" y="228" width="25" height="137" rx="8" fill="#8175E4"/>
+</svg>
