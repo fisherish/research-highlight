@@ -14,6 +14,7 @@ files = [
     "bootstrap.js",
     "src/core.js",
     "src/annotation.js",
+    "src/reader.js",
     "src/batch.js",
     "src/topics.js",
     "prefs.js",
