@@ -14,7 +14,7 @@
 
 Researchers already decide what matters when they highlight a paper. **Research Highlight** captures that intent, adds structured AI metadata, and makes important passages retrievable across papers without forcing a second note-taking workflow.
 
-The current product is delivered through two connected plugins:
+The project is delivered through two connected plugins:
 
 | Surface | Product module | Role |
 | --- | --- | --- |
@@ -62,7 +62,7 @@ And the same structure is stored as portable `ai:*` tags for retrieval.
 
 **Structured, not merely summarized.** Each highlight can carry a concise summary, knowledge role, topics, and likely future use.
 
-**Zotero-native source of truth.** The product enriches existing annotations instead of creating a competing highlight database.
+**Zotero-native source of truth.** The project enriches existing annotations instead of creating a competing highlight database.
 
 **Local-first.** Research metadata can remain in the user's existing Zotero and Obsidian workflow rather than requiring a proprietary cloud store.
 
@@ -104,9 +104,11 @@ See [`obsidian-plugin/README.md`](obsidian-plugin/README.md).
 
 Research Highlight is being developed as a coherent research product, not as a collection of personal scripts.
 
-The current beta establishes the local-first core: capture, structure, synchronization, retrieval, and provider choice. Commercially valuable future layers can build on that foundation with semantic search, saved research views, evidence packs, richer vocabulary management, cross-highlight synthesis, team taxonomies, collaborative research spaces, and optional managed infrastructure.
+The current priority is product quality: reliable annotation, low-friction setup, provider flexibility, consistent behavior across Zotero and Obsidian, safer vocabulary management, and strong retrieval of accumulated research highlights.
 
-Current product positioning and commercial direction are documented in [`docs/product.md`](docs/product.md).
+Longer-term directions may include semantic retrieval, richer research views, synthesis across selected highlights, or collaborative workflows. Commercialization is only a possible future direction and is not part of the current product positioning.
+
+Current product principles and roadmap are documented in [`docs/product.md`](docs/product.md) and [`docs/roadmap.md`](docs/roadmap.md).
 
 ## Brand
 
@@ -147,7 +149,7 @@ The Zotero plugin already has a validated GitHub Release based automatic update 
 
 **Public beta.** The core Zotero AI annotation path, ZotLit transport, Obsidian Dashboard live refresh, and Zotero automatic updates have been validated in the real workflow.
 
-The next product phase is focused on packaging, provider validation, safer vocabulary management, consistent branding across both clients, and preparing stable public distribution.
+The next phase is focused on packaging, provider validation, safer vocabulary management, consistent branding across both clients, and preparing stable public distribution.
 
 ## Repository
 
@@ -158,6 +160,7 @@ research-highlight-toolkit/
 ├─ obsidian-plugin/
 ├─ docs/
 │  ├─ product.md
+│  ├─ roadmap.md
 │  ├─ brand.md
 │  ├─ architecture.md
 │  ├─ data-contract.md
