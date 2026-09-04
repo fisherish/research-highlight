@@ -62,20 +62,18 @@ Zotero.Prefs.get(key, true)
 
 This applies to Auto annotate, API Key, and Model preference reads. The environment variable `GROQ_API_KEY` remains only as a migration fallback.
 
-## Topic-generation adjustment
+## Frozen canonical prompts
 
-The migration handoff did not preserve the exact historical Actions & Tags prompt byte-for-byte. The reconstructed prompt allowed 1–5 topics, and v0.1.2 could therefore generate five topics for a short highlight.
+The AI annotation prompt and Topic Consolidator prompt have now been restored from the user's optimized production prompts and are treated as frozen compatibility behavior.
 
-v0.1.3 intentionally tightens this behavior:
+Do not rewrite, shorten, expand, translate, or otherwise optimize these prompts during refactoring. In particular:
 
-- 1–3 topics maximum;
-- use the smallest sufficient number;
-- usually 1–2 topics;
-- use 3 only when the highlight has three clearly independent retrieval axes.
+- annotation input is paper title + highlighted text;
+- the annotation prompt specifies 1–3 topics;
+- no paper abstract is added to the annotation prompt;
+- the full retrieval-granularity Topic Consolidator prompt, including the CXCL10/CXCR3 counterexample and umbrella-topic rules, is preserved verbatim.
 
-The strict JSON schema is also capped at `maxItems: 3`.
-
-Before a stable release, the prompt should be compared against the user's still-installed historical Actions & Tags script so any remaining prompt differences can be frozen deliberately rather than guessed.
+The strict annotation JSON schema is capped at `maxItems: 3` to match the frozen prompt.
 
 ## Installation fix retained from v0.1.2
 
