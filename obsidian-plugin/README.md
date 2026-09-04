@@ -6,7 +6,28 @@
 
 Research Highlight Dashboard is the Obsidian side of Research Highlight. It lets you search and review Zotero highlights that have already been annotated and carried into Obsidian through ZotLit.
 
-> **Status:** public beta. Current validated build: **v0.1.3**.
+> **Status:** public beta. Current build: **v0.1.4**.
+
+## Install
+
+Download the latest `research-highlight-dashboard-v*.zip` from the repository's [Releases](https://github.com/fisherish/research-highlight/releases) page.
+
+Extract it into:
+
+```text
+<your-vault>/.obsidian/plugins/
+```
+
+You should end up with:
+
+```text
+.obsidian/plugins/research-highlight-dashboard/
+├─ main.js
+├─ manifest.json
+└─ styles.css
+```
+
+Then enable **Research Highlight Dashboard** in **Obsidian Settings → Community plugins**.
 
 ## How it fits into the workflow
 
@@ -58,8 +79,6 @@ Original highlight
 Open in Zotero
 ```
 
-The goal is to keep the information needed for review in one place and make it easy to return to the original passage when necessary.
-
 ## Requirements
 
 - Obsidian 1.13+
@@ -67,9 +86,11 @@ The goal is to keep the information needed for review in one place and make it e
 
 For the complete workflow on the Zotero side, ZotLit Companion and Research Highlight AI are also used.
 
-## Distribution
+## Releases
 
-The current build already runs as a native Obsidian plugin. The next step is to finish a cleaner public release and update flow.
+Each Dashboard release includes a ready-to-extract ZIP plus `main.js`, `manifest.json`, and `styles.css` as separate assets.
+
+The release package is built automatically from `obsidian-plugin/manifest.json`.
 
 ## Development files
 
@@ -86,3 +107,5 @@ obsidian-plugin/
 ```
 
 `src/main.js` is the editable source. `main.js` is the runtime copy loaded by Obsidian.
+
+See [`../docs/installation.md`](../docs/installation.md) for the complete Zotero + Obsidian setup.
