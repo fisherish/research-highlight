@@ -1,0 +1,89 @@
+name: Release Obsidian Plugin
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - obsidian-plugin/manifest.json
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read plugin version
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(python - <<'PY'
+          import json
+          with open('obsidian-plugin/manifest.json', encoding='utf-8') as f:
+              print(json.load(f)['version'])
+          PY
+          )
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=obsidian-dashboard-v$VERSION" >> "$GITHUB_OUTPUT"
+          echo "zip=research-highlight-dashboard-v$VERSION.zip" >> "$GITHUB_OUTPUT"
+
+      - name: Check whether release already exists
+        id: existing
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        shell: bash
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate and build
+        if: steps.existing.outputs.exists != 'true'
+        shell: bash
+        run: |
+          cd obsidian-plugin
+          node --check src/main.js
+          python -m json.tool manifest.json >/dev/null
+          python -m json.tool package.json >/dev/null
+          node build.mjs
+
+      - name: Package install folder
+        if: steps.existing.outputs.exists != 'true'
+        env:
+          ZIP: ${{ steps.version.outputs.zip }}
+        shell: bash
+        run: |
+          mkdir -p dist/research-highlight-dashboard
+          cp obsidian-plugin/main.js dist/research-highlight-dashboard/main.js
+          cp obsidian-plugin/manifest.json dist/research-highlight-dashboard/manifest.json
+          cp obsidian-plugin/styles.css dist/research-highlight-dashboard/styles.css
+          cd dist
+          zip -r "$ZIP" research-highlight-dashboard
+
+      - name: Create GitHub Release
+        if: steps.existing.outputs.exists != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+          TAG: ${{ steps.version.outputs.tag }}
+          ZIP: ${{ steps.version.outputs.zip }}
+        shell: bash
+        run: |
+          gh release create "$TAG" \
+            "dist/$ZIP" \
+            "obsidian-plugin/main.js" \
+            "obsidian-plugin/manifest.json" \
+            "obsidian-plugin/styles.css" \
+            --target "$GITHUB_SHA" \
+            --title "Research Highlight Dashboard v$VERSION" \
+            --notes "Install by extracting the ZIP into your vault's .obsidian/plugins/ folder, then enable Research Highlight Dashboard in Obsidian."
