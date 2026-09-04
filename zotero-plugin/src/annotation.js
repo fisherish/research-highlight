@@ -57,7 +57,6 @@ Object.assign(ResearchHighlightAI, {
     const context = {
       highlight: String(annotation.annotationText || "").trim(),
       title: "",
-      abstract: "",
     };
 
     try {
@@ -68,7 +67,6 @@ Object.assign(ResearchHighlightAI, {
 
       if (paper?.isRegularItem?.()) {
         context.title = String(paper.getField("title") || "").trim();
-        context.abstract = String(paper.getField("abstractNote") || "").trim();
       }
     } catch (error) {
       Zotero.debug(`[Research Highlight AI] Context lookup warning: ${error}`);
@@ -78,44 +76,48 @@ Object.assign(ResearchHighlightAI, {
   },
 
   buildAnnotationPrompt(context) {
-    return `
-You are annotating a biomedical literature highlight for future scientific retrieval.
+    const title = context.title || "";
+    const highlight = context.highlight || "";
 
-Return a concise Chinese scientific summary plus structured metadata.
+    return `你正在协助维护一个生物医学科研文献高亮知识库.
 
-Rules:
-1. summary:
-   - Chinese.
-   - Preserve the scientific meaning of the highlighted text.
-   - Use the paper title and abstract only as context for disambiguation.
-   - Prefer one compact sentence, or two short sentences when necessary.
-   - Do not invent conclusions not supported by the highlight.
+这些高亮来自科研人员在阅读论文时主动保存的, 认为未来可能有价值的段落.
 
-2. role:
-   - A short lowercase functional label describing what role this highlight plays in scientific reasoning.
-   - Examples: mechanism, result, limitation, background, method, hypothesis, evidence, comparison.
+知识库的目标是让这些零散高亮在未来能够被快速检索, 重新理解, 并用于科研写作, 机制分析, 实验设计和研究思路整理.
 
-3. topics:
-   - 1–3 retrieval-oriented scientific topics.
-   - Use the smallest sufficient number of topics; usually 1–2.
-   - Use 3 only when the highlight contains three clearly independent retrieval axes.
-   - Prefer concepts useful as future search/filter keys.
-   - Avoid generic labels such as "tumor-biology" or "immune-signaling".
-   - Keep independently useful ligand/receptor concepts separate when they serve different retrieval purposes.
+你的任务是根据当前高亮, 提炼它最值得长期保存的信息, 并赋予简洁, 稳定, 便于检索的结构化标注.
 
-4. use:
-   - A short lowercase label for likely writing/research use.
-   - Examples: introduction, results, discussion, methods, rationale.
+论文标题:
 
-Paper title:
-${context.title || "(not available)"}
+${title}
 
-Paper abstract:
-${context.abstract || "(not available)"}
+高亮原文:
 
-Highlight:
-${context.highlight}
-`.trim();
+${highlight}
+
+请生成:
+
+summary:
+
+用中文 1-2 句话概括最值得保存的核心信息, 以高亮中明确陈述的事实和关系为依据.
+
+role:
+
+background / mechanism / method / result / limitation /
+
+definition / hypothesis / application / other
+
+topics:
+
+提取 1-3 个最有检索价值的英文主题词, 优先具体的分子、细胞、通路、模型和关键生物学概念.
+
+use:
+
+introduction / discussion / method / idea / figure / none
+
+关注这段高亮本身最有长期检索价值的信息.
+
+role 表示它是什么类型的知识, use 表示未来最可能怎么使用.`;
   },
 
   async callGroqForAnnotation(context) {
