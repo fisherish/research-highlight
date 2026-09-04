@@ -13,7 +13,7 @@ async function startup({ id, version, rootURI }) {
   await Zotero.initializationPromise;
   await Zotero.unlockPromise;
   await Zotero.uiReadyPromise;
-  for (const script of ["core.js", "annotation.js", "reader.js", "batch.js", "topics.js"]) {
+  for (const script of ["core.js", "annotation.js", "reader.js", "batch.js", "topics.js", "topics-groq.js"]) {
     Services.scriptloader.loadSubScript(rootURI + "src/" + script);
   }
   ResearchHighlightAI.init({ id, version, rootURI });
