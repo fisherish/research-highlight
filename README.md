@@ -1,111 +1,49 @@
-# Research Highlight Toolkit
+<p align="center">
+  <img src="assets/brand/research-highlight-icon.svg" width="150" alt="Research Highlight icon" />
+</p>
 
-Research Highlight Toolkit packages a working research-reading workflow into two installable plugins: one for Zotero and one for Obsidian.
+<h1 align="center">Research Highlight</h1>
 
-The goal is simple: turn Zotero highlights into AI-annotated, searchable research notes while keeping **Zotero as the source of truth** and reusing ZotLit for synchronization.
+<p align="center"><strong>Turn literature highlights into reusable research knowledge.</strong></p>
 
-> **Status:** early development. Research Highlight Dashboard v0.1.3 has been validated in the real Obsidian + ZotLit environment. Research Highlight AI v0.1.3 installs successfully in Zotero 10; manual Batch AI Annotate, automatic annotation of newly created highlights, ZotLit/Dashboard propagation, and GitHub Release based automatic plugin updates have all been validated in the real environment.
+<p align="center">
+  A local-first research knowledge layer for Zotero and Obsidian.
+</p>
 
-## What problem does this solve?
+---
 
-A literature highlight is most useful when it can be found again by meaning rather than only by paper or page.
+Researchers already decide what matters when they highlight a paper. **Research Highlight** captures that intent, adds structured AI metadata, and makes important passages retrievable across papers without forcing a second note-taking workflow.
 
-The workflow adds a concise Chinese AI summary plus structured Role, Topic, and Use metadata to each Zotero highlight, then exposes those annotations in an Obsidian Dashboard designed for both focused reading and high-density scanning.
+The current product is delivered through two connected plugins:
 
-## Final workflow
+| Surface | Product module | Role |
+| --- | --- | --- |
+| Zotero | **Research Highlight AI** | Enrich highlights with summaries, research roles, topics, and future-use metadata |
+| Obsidian | **Research Highlight Dashboard** | Search, filter, review, and reopen structured highlights across papers |
+
+Zotero remains the source of truth. ZotLit and ZotLit Companion currently provide the synchronization layer between Zotero and Obsidian.
+
+## What Research Highlight does
+
+A saved highlight becomes a compact research object rather than an isolated colored sentence.
 
 ```text
 Zotero highlight
     ↓
 Research Highlight AI
     ↓
-annotation comment + ai:* tags
+summary + role + topics + use
     ↓
-ZotLit Companion
+Zotero annotation metadata
     ↓
-ZotLit live database
+ZotLit Companion / ZotLit
     ↓
 Research Highlight Dashboard
     ↓
-Reader / Sticky
+search · filter · review · reopen in Zotero
 ```
 
-Final installed components:
-
-```text
-Zotero
-├─ ZotLit Companion
-└─ Research Highlight AI
-
-Obsidian
-├─ ZotLit
-└─ Research Highlight Dashboard
-```
-
-**ZotLit and ZotLit Companion are prerequisites.** This repository deliberately does not reimplement their synchronization layer.
-
-There is no project-specific `highlights.json`, no custom highlight SQLite database, and no ZotLit refresh logic inside the AI plugin.
-
-## Components
-
-### Research Highlight AI — Zotero plugin
-
-Current v0.1.3 test build includes:
-
-- automatic annotation of newly created highlight annotations through Zotero Notifier;
-- paper title + highlighted text as AI input;
-- Groq with default model `qwen/qwen3.8-27b`;
-- `reasoning_effort: none` and strict JSON schema output;
-- preservation of existing manual comments or translations;
-- canonical `[AI]` comment block and `ai:*` tags;
-- Batch AI Annotate for selected items, attachments, or annotations;
-- sequential batch processing with retry/backoff;
-- manually invoked Consolidate AI Topics;
-- settings for API key, model, and automatic annotation;
-- GitHub Actions release automation and Zotero automatic updates through `updates.json`.
-
-The production AI annotation prompt and Topic Consolidator prompt are treated as frozen compatibility behavior and must not be rewritten during refactoring.
-
-The development build defaults **Auto annotate new highlights** to off so it can be tested safely while the old Actions & Tags automation is still installed.
-
-Validated in the real workflow:
-
-- manual Batch annotation;
-- automatic annotation of newly created highlights;
-- Groq output and comment preservation;
-- exact tag compatibility;
-- ZotLit transport;
-- automatic Dashboard refresh;
-- GitHub Release based Zotero plugin update discovery and installation.
-
-See [`zotero-plugin/README.md`](zotero-plugin/README.md).
-
-### Research Highlight Dashboard — Obsidian plugin
-
-Current validated v0.1.3 includes:
-
-- native Obsidian `ItemView`;
-- **Research Highlights** ribbon and command-palette entry;
-- graceful ZotLit dependency handling;
-- direct ZotLit live `itemAnnotations` reads with `.prepare().all()`;
-- Reader and Sticky views;
-- Search, Role, Use, and Topic filtering;
-- sorting and ascending / descending direction;
-- Zotero annotation deep links;
-- ZotLit live refresh;
-- persisted view, sorting, direction, and appearance preferences;
-- responsive Sticky columns;
-- Auto, Eye, and Dark appearance modes.
-
-Dataview is no longer a production dependency.
-
-See [`obsidian-plugin/README.md`](obsidian-plugin/README.md).
-
-## Data contract
-
-The two custom plugins do not call each other directly. They communicate through Zotero annotation state transported by ZotLit.
-
-Canonical comment block:
+The canonical annotation remains human-readable inside Zotero:
 
 ```text
 [AI]
@@ -116,78 +54,117 @@ Topics: CAR-T cells, solid tumors, tumor microenvironment
 Use: discussion
 ```
 
-Canonical tags:
+And the same structure is stored as portable `ai:*` tags for retrieval.
+
+## Built for serious literature workflows
+
+**Highlight-first.** Research Highlight starts from passages the researcher deliberately selected, rather than indiscriminately treating an entire PDF as equally important.
+
+**Structured, not merely summarized.** Each highlight can carry a concise summary, knowledge role, topics, and likely future use.
+
+**Zotero-native source of truth.** The product enriches existing annotations instead of creating a competing highlight database.
+
+**Local-first.** Research metadata can remain in the user's existing Zotero and Obsidian workflow rather than requiring a proprietary cloud store.
+
+**Provider-flexible.** Research Highlight AI currently ships provider templates for Groq, OpenAI, and OpenRouter, plus a custom OpenAI-compatible endpoint. API credentials remain local to Zotero.
+
+**Portable by design.** The Zotero annotation data contract is intentionally inspectable and can be consumed by other compatible tools.
+
+## Research Highlight AI for Zotero
+
+Current capabilities include:
+
+- automatic AI annotation of newly created text highlights;
+- single-highlight AI annotation from the Zotero Reader context menu;
+- batch processing for papers, attachments, or annotations;
+- preservation of manual comments and translations;
+- structured `summary / role / topics / use` output;
+- Topic Consolidator for retrieval-oriented vocabulary cleanup;
+- Groq, OpenAI, OpenRouter, and Custom OpenAI-compatible provider configuration;
+- editable API endpoint, API key, and model ID;
+- GitHub Release based automatic updates.
+
+The original Groq path has been validated end-to-end in the real Zotero → ZotLit → Obsidian workflow. Newly added provider templates should be treated as beta paths until individually validated with production credentials.
+
+See [`zotero-plugin/README.md`](zotero-plugin/README.md).
+
+## Research Highlight Dashboard for Obsidian
+
+The Dashboard provides two ways to work with the same research memory:
+
+**Reader** is optimized for focused review of individual evidence. **Sticky** is optimized for scanning many highlights as a visual research board.
+
+Current capabilities include search, Role / Use / Topic filters, sorting, Zotero deep links, live ZotLit refresh, responsive layouts, and Auto / Eye / Dark appearance modes.
+
+Dataview is not required.
+
+See [`obsidian-plugin/README.md`](obsidian-plugin/README.md).
+
+## Product direction
+
+Research Highlight is being developed as a coherent research product, not as a collection of personal scripts.
+
+The current beta establishes the local-first core: capture, structure, synchronization, retrieval, and provider choice. Commercially valuable future layers can build on that foundation with semantic search, saved research views, evidence packs, richer vocabulary management, cross-highlight synthesis, team taxonomies, collaborative research spaces, and optional managed infrastructure.
+
+Current product positioning and commercial direction are documented in [`docs/product.md`](docs/product.md).
+
+## Brand
+
+The shared Research Highlight identity is used across Zotero and Obsidian. The mark combines a research document, one highlighted passage, and a compact structured-data motif.
+
+Brand assets and usage guidance: [`docs/brand.md`](docs/brand.md).
+
+## Architecture
 
 ```text
-ai:done
-ai:role:limitation
-ai:topic:CAR-T-cells
-ai:topic:solid-tumors
-ai:topic:tumor-microenvironment
-ai:use:discussion
+Zotero
+├─ ZotLit Companion
+└─ Research Highlight AI
+          │
+          │ annotation comment + ai:* tags
+          ▼
+      ZotLit transport
+          │
+          ▼
+Obsidian
+├─ ZotLit
+└─ Research Highlight Dashboard
 ```
 
-This loose coupling means another producer can feed the Dashboard as long as it emits the same compatible schema.
+Research Highlight deliberately does **not** introduce a project-specific `highlights.json`, a second custom SQLite store, or a competing ZotLit synchronization implementation.
 
-See [`docs/data-contract.md`](docs/data-contract.md).
+Detailed architecture: [`docs/architecture.md`](docs/architecture.md).
 
-## Architecture principles
-
-1. **Zotero is the source of truth.**
-2. **ZotLit owns synchronization and the live read model.**
-3. **Research Highlight AI produces annotation metadata.**
-4. **Research Highlight Dashboard consumes that metadata.**
-5. **No competing highlight store is introduced.**
-6. **The two custom plugins remain coupled only through the data contract.**
-
-See [`docs/architecture.md`](docs/architecture.md).
-
-## Repository layout
-
-```text
-research-highlight-toolkit/
-├─ zotero-plugin/
-│  ├─ src/
-│  ├─ locale/
-│  ├─ scripts/
-│  ├─ manifest.json
-│  ├─ bootstrap.js
-│  ├─ prefs.js
-│  ├─ prefs.xhtml
-│  ├─ prefs.css
-│  ├─ package.json
-│  └─ README.md
-├─ obsidian-plugin/
-│  ├─ src/
-│  ├─ main.js
-│  ├─ manifest.json
-│  ├─ package.json
-│  ├─ styles.css
-│  └─ README.md
-├─ docs/
-│  ├─ architecture.md
-│  ├─ data-contract.md
-│  └─ installation.md
-├─ README.md
-└─ .gitignore
-```
-
-## Current development sequence
-
-1. ✅ Migrate Final v6 Dashboard into a native Obsidian plugin.
-2. ✅ Validate Dashboard behavior in the real ZotLit environment.
-3. ✅ Package the validated Actions & Tags behavior into Research Highlight AI.
-4. ✅ Validate manual Batch AI Annotate end-to-end in the real Zotero 10 environment.
-5. ✅ Validate automatic annotation of newly created highlights.
-6. ✅ Validate GitHub Release based Zotero automatic updates.
-7. **Next:** validate selected-item / attachment batch collection and the manual Topic Consolidator.
-8. After parity is confirmed, clean up packaging and prepare stable releases.
-9. Finally validate the four-plugin workflow on a clean installation.
+Data contract: [`docs/data-contract.md`](docs/data-contract.md).
 
 ## Installation
 
-The target installation and current validated prototype environment are documented in [`docs/installation.md`](docs/installation.md).
+Installation and dependency details are documented in [`docs/installation.md`](docs/installation.md).
+
+The Zotero plugin already has a validated GitHub Release based automatic update channel. The Obsidian plugin is currently distributed as a native plugin build while its public distribution path is prepared.
+
+## Status
+
+**Public beta.** The core Zotero AI annotation path, ZotLit transport, Obsidian Dashboard live refresh, and Zotero automatic updates have been validated in the real workflow.
+
+The next product phase is focused on packaging, provider validation, safer vocabulary management, consistent branding across both clients, and preparing stable public distribution.
+
+## Repository
+
+```text
+research-highlight-toolkit/
+├─ assets/brand/
+├─ zotero-plugin/
+├─ obsidian-plugin/
+├─ docs/
+│  ├─ product.md
+│  ├─ brand.md
+│  ├─ architecture.md
+│  ├─ data-contract.md
+│  └─ installation.md
+└─ README.md
+```
 
 ## License
 
-A repository license has not been selected yet. Add `LICENSE` once the intended distribution license is decided.
+A distribution license has not yet been selected. Until a license is added, the repository should not be described as open source.
