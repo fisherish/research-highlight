@@ -2,9 +2,9 @@
 
 Native Zotero 10 plugin that packages the already validated Actions & Tags workflow into an installable plugin.
 
-> Status: early development. Current test build: **v0.1.0**.
+> Status: early development. Current test build: **v0.1.2**.
 
-## Current v0.1.0 scope
+## Current v0.1.2 scope
 
 - Groq provider with user-supplied API key
 - default model `qwen/qwen3.8-27b`
@@ -21,9 +21,13 @@ Native Zotero 10 plugin that packages the already validated Actions & Tags workf
 
 Zotero remains the source of truth. This plugin does not call ZotLit refresh APIs and does not create a separate database.
 
+## v0.1.2 installation fix
+
+The v0.1.0 and v0.1.1 XPIs were rejected before plugin startup. The cause was the missing `applications.zotero.update_url` field in `manifest.json`; Zotero reports this as the generic “may be incompatible” installation error. v0.1.2 adds the update URL and uses the Zotero 10 compatibility range `10.0` through `10.0.*`.
+
 ## Safety during migration from Actions & Tags
 
-`Auto annotate new highlights` defaults to **off** in v0.1.0.
+`Auto annotate new highlights` defaults to **off** in v0.1.2.
 
 Keep it off while the old Actions & Tags `Create Annotation` action is still active. Otherwise both automations may start an API request for the same newly created highlight before either one has written `ai:done`.
 
@@ -94,7 +98,7 @@ npm run build
 The build script uses only Python's standard library and writes:
 
 ```text
-dist/research-highlight-ai-0.1.0.xpi
+dist/research-highlight-ai-0.1.2.xpi
 ```
 
 For Zotero 10, install the XPI from **Tools → Plugins**.
