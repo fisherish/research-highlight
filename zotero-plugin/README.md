@@ -2,26 +2,57 @@
 
 Native Zotero 10 plugin that packages the validated Actions & Tags workflow into an installable plugin.
 
-> Status: beta. Current test build: **v0.1.5**. Manual Batch AI Annotate, automatic annotation of newly created highlights, ZotLit/Dashboard propagation, GitHub Release based automatic updates, and Reader right-click single-highlight annotation are implemented.
+> Status: beta. Current build: **v0.2.0**. Manual Batch AI Annotate, automatic annotation of newly created highlights, ZotLit/Dashboard propagation, GitHub Release based automatic updates, Reader right-click single-highlight annotation, and configurable model providers are implemented.
 
-## Current v0.1.5 scope
+## Current v0.2.0 scope
 
-- Groq provider with user-supplied API key
-- default model `qwen/qwen3.8-27b`
-- `reasoning_effort: none`
-- strict JSON schema output
+- provider templates for Groq, OpenAI, and OpenRouter
+- editable API Endpoint, API Key, and Model fields
+- Custom OpenAI-compatible Chat Completions endpoint support
+- no preset Anthropic provider
+- Groq default model `qwen/qwen3.8-27b`
+- OpenAI template model `gpt-4.1-mini`
+- OpenRouter template model `openai/gpt-oss-20b`
+- strict JSON Schema structured output contract
 - automatic annotation of newly created highlights through Zotero Notifier
 - Reader context menu action for a single highlight
+- Reader context menu switch for Auto annotate
 - Batch AI Annotate for selected regular items, attachments, or annotations
 - 1500 ms sequential batch delay
 - up to 3 retries for HTTP 429 / 5xx with 5 / 10 / 20 s backoff
-- conservative manual Consolidate AI Topics
+- manual Consolidate AI Topics with an 800-token output budget
 - canonical `[AI]` comment and `ai:*` tag contract
 - preservation of existing manual / translation comments
 - Zotero Item API topic discovery via `annotation.getTags()`
 - GitHub Actions release automation and Zotero automatic updates through `updates.json`
 
 Zotero remains the source of truth. This plugin does not call ZotLit refresh APIs and does not create a separate database.
+
+## Provider templates
+
+The Settings pane provides these presets:
+
+```text
+Groq
+  Endpoint: https://api.groq.com/openai/v1/chat/completions
+  Model: qwen/qwen3.8-27b
+
+OpenAI
+  Endpoint: https://api.openai.com/v1/chat/completions
+  Model: gpt-4.1-mini
+
+OpenRouter
+  Endpoint: https://openrouter.ai/api/v1/chat/completions
+  Model: openai/gpt-oss-20b
+
+Custom (OpenAI-compatible)
+  Endpoint: user supplied
+  Model: user supplied
+```
+
+Selecting a preset fills its endpoint and suggested model. Endpoint and Model remain editable. Custom is intended for OpenAI Chat Completions-compatible services that support JSON Schema Structured Outputs. A Custom endpoint may leave API Key blank when the local or private service does not require authentication.
+
+The plugin intentionally does not ship an Anthropic provider preset. Users may still choose any model exposed through a compatible router or custom endpoint if they configure it themselves.
 
 ## Reader single-highlight action
 
@@ -40,6 +71,15 @@ If the selected highlight already has `ai:done`, the menu changes to:
 ```
 
 Re-annotation replaces only the generated `[AI]` block and generated `ai:*` tags. Existing manual comments or translations remain preserved.
+
+The same Reader context menu also exposes:
+
+```text
+开启自动标注新建高亮
+关闭自动标注新建高亮
+```
+
+These Reader actions execute without blocking confirmation popups.
 
 ## Validated integration status
 
@@ -73,7 +113,7 @@ Zotero update discovery
 plugin update installation
 ```
 
-Validated behavior includes manual Batch annotation, automatic annotation, comment preservation, tag compatibility, ZotLit transport, Dashboard live refresh, and Zotero automatic update discovery/install.
+The original Groq path has been validated end-to-end. Additional provider templates should be treated as newly added v0.2.0 paths until tested with real credentials.
 
 ## Frozen annotation prompt
 
@@ -88,18 +128,21 @@ Do not rewrite, shorten, expand, translate, or otherwise optimize it during refa
 
 ## Topic Consolidator
 
-The Topic Consolidator is intentionally conservative. Its default is to keep Topics separate unless the merge is high-confidence and would not remove a useful independent retrieval entry. Related molecules, models, states, pathways, readouts, cell subsets, or therapeutic concepts are not merged merely because they occur in the same biological story.
+The Topic Consolidator uses a retrieval-oriented middle-ground policy: it actively removes near-duplicate naming fragments while preserving useful distinctions between different molecules, cell states, models, mechanisms, readouts, diseases, therapies, and engineered constructs.
+
+Its output is capped at 800 tokens to stay below the validated Groq on-demand OTPM ceiling encountered during testing.
 
 ## Settings
 
 ```text
-Provider: Groq
-API Key: user supplied
-Model: qwen/qwen3.8-27b
+Provider: Groq / OpenAI / OpenRouter / Custom
+API Endpoint: editable
+API Key: editable
+Model: editable
 Auto annotate new highlights: on/off
 ```
 
-The API key is stored locally in Zotero preferences. If the preference is empty, `GROQ_API_KEY` is accepted as a migration fallback. No API key is included in this repository.
+The API key is stored locally in Zotero preferences and is never included in this repository. Provider-specific environment variables are accepted as fallbacks for Groq (`GROQ_API_KEY`), OpenAI (`OPENAI_API_KEY`), and OpenRouter (`OPENROUTER_API_KEY`).
 
 ## Data contract
 
@@ -142,6 +185,7 @@ Zotero Reader annotation context menu:
 
 - AI 标注此高亮
 - 重新 AI 标注此高亮, when `ai:done` already exists
+- 开启/关闭自动标注新建高亮
 
 ## Build
 
@@ -153,7 +197,7 @@ npm run build
 The build script uses only Python's standard library and writes:
 
 ```text
-dist/research-highlight-ai-0.1.5.xpi
+dist/research-highlight-ai-0.2.0.xpi
 ```
 
 For Zotero 10, install the XPI from **Tools → Plugins**. Future versions are delivered through the validated GitHub Release based update channel.
