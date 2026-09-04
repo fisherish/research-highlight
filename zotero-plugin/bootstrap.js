@@ -10,6 +10,9 @@ function install() {
 
 async function startup({ id, version, rootURI }) {
   log(`Starting ${version}`);
+  await Zotero.initializationPromise;
+  await Zotero.unlockPromise;
+  await Zotero.uiReadyPromise;
   for (const script of ["core.js", "annotation.js", "batch.js", "topics.js"]) {
     Services.scriptloader.loadSubScript(rootURI + "src/" + script);
   }
