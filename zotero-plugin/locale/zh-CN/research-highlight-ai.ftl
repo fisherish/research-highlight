@@ -1,0 +1,11 @@
+research-highlight-ai-menu-batch =
+    .label = 批量 AI 标注高亮
+research-highlight-ai-menu-consolidate =
+    .label = 合并 AI Topics
+research-highlight-ai-prefs-title = Research Highlight AI
+research-highlight-ai-prefs-provider = Provider
+research-highlight-ai-prefs-api-key = API Key
+research-highlight-ai-prefs-model = Model
+research-highlight-ai-prefs-auto = 自动标注新建高亮
+research-highlight-ai-prefs-key-note = API Key 仅保存在本地 Zotero preferences 中，不会写入仓库。
+research-highlight-ai-prefs-auto-note = 旧的 Actions & Tags 自动标注仍启用时请保持关闭，否则两个自动化可能同时处理同一个高亮。
