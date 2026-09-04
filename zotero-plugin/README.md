@@ -167,6 +167,8 @@ For Zotero 10, install the XPI from **Tools → Plugins**.
 
 ## Product direction
 
-Research Highlight AI is not positioned as a one-off personal automation. It is the enrichment surface of a broader research knowledge product focused on structured retrieval, local-first control, provider choice, and future Pro / Team workflows.
+Research Highlight AI is not positioned as a one-off personal automation. It is one part of a broader research knowledge product focused on structured retrieval, local-first control, provider choice, and a smoother literature workflow.
 
-See [`../docs/product.md`](../docs/product.md) for the product strategy and commercial direction.
+The current priority is reliability and usability for researchers. Broader collaboration or commercial directions may be explored later, but they are not part of the current product promise.
+
+See [`../docs/product.md`](../docs/product.md) for the current product principles and direction.
