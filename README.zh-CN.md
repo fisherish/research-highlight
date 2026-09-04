@@ -193,7 +193,7 @@ Zotero 插件的 GitHub Release 自动更新链也已经跑通。
 ## 仓库结构
 
 ```text
-research-highlight-toolkit/
+research-highlight/
 ├─ assets/brand/
 ├─ zotero-plugin/
 ├─ obsidian-plugin/
