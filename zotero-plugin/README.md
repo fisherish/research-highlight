@@ -2,7 +2,7 @@
 
 Native Zotero 10 plugin that packages the already validated Actions & Tags workflow into an installable plugin.
 
-> Status: early development. Current test build: **v0.1.2**.
+> Status: early development. Current test build: **v0.1.2**. Manual Batch AI Annotate has now been validated end-to-end in the real Zotero 10 + ZotLit + Obsidian environment.
 
 ## Current v0.1.2 scope
 
@@ -20,6 +20,33 @@ Native Zotero 10 plugin that packages the already validated Actions & Tags workf
 - Zotero Item API topic discovery via `annotation.getTags()`
 
 Zotero remains the source of truth. This plugin does not call ZotLit refresh APIs and does not create a separate database.
+
+## Validated integration status
+
+The following manual Batch path has been tested successfully in the real environment:
+
+```text
+Research Highlight AI
+    ↓
+Zotero annotation comment + ai:* tags
+    ↓
+ZotLit Companion
+    ↓
+ZotLit live database
+    ↓
+Research Highlight Dashboard
+```
+
+Validated behavior:
+
+- Groq request succeeds;
+- Chinese summary is generated normally;
+- existing manual comment / translation content is preserved;
+- `ai:done`, `ai:role:*`, `ai:topic:*`, and `ai:use:*` remain compatible with the original schema;
+- ZotLit transports the saved changes without custom refresh logic;
+- Research Highlight Dashboard updates automatically from the live DB.
+
+The next validation target is automatic annotation of newly created highlights.
 
 ## v0.1.2 installation fix
 
@@ -41,6 +68,8 @@ Recommended migration test:
 6. disable the old Actions & Tags auto action;
 7. enable Auto annotate in Research Highlight AI;
 8. create a new highlight and verify the same output schema.
+
+Steps 1 through 5 have now been validated successfully in the real environment.
 
 ## Settings
 
