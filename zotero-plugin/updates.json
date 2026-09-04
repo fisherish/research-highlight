@@ -3,8 +3,8 @@
     "research-highlight-ai@fisherish.github.io": {
       "updates": [
         {
-          "version": "0.2.2",
-          "update_link": "https://github.com/fisherish/research-highlight/releases/download/zotero-ai-v0.2.2/research-highlight-ai-v0.2.2.xpi",
+          "version": "0.2.3",
+          "update_link": "https://github.com/fisherish/research-highlight/releases/download/zotero-ai-v0.2.3/research-highlight-ai-v0.2.3.xpi",
           "applications": {
             "zotero": {
               "strict_min_version": "10.0",
