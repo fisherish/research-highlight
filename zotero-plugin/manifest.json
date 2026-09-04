@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+  "name": "Research Highlight AI",
+  "version": "0.1.0",
+  "description": "AI annotation, batch processing, and topic consolidation for Zotero highlights.",
+  "author": "fisherish",
+  "homepage_url": "https://github.com/fisherish/research-highlight-toolkit",
+  "applications": {
+    "zotero": {
+      "id": "research-highlight-ai@fisherish.github.io",
+      "strict_min_version": "10.0",
+      "strict_max_version": "10.0.*"
+    }
+  }
+}
