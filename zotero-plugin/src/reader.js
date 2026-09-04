@@ -63,9 +63,7 @@ Object.assign(ResearchHighlightAI, {
 
   toggleAutoAnnotateFromReader() {
     const current = this.getPrefBool(this.PREFS.autoAnnotate, false);
-    const next = !current;
-    Zotero.Prefs.set(this.PREFS.autoAnnotate, next, true);
-    this.alert(next ? "已开启自动标注新建高亮。" : "已关闭自动标注新建高亮。");
+    Zotero.Prefs.set(this.PREFS.autoAnnotate, !current, true);
   },
 
   async runSingleAnnotation(annotationID, force = false) {
@@ -80,33 +78,10 @@ Object.assign(ResearchHighlightAI, {
       if (annotationType && annotationType !== "highlight") return;
       if (!String(annotation.annotationText || "").trim()) return;
 
-      if (force && this.hasTag(annotation, "ai:done")) {
-        const oldAIBlock = String(annotation.annotationComment || "").slice(
-          String(annotation.annotationComment || "").lastIndexOf("[AI]")
-        );
-        const context = await this.getAnnotationContext(annotation);
-        const result = await this.callGroqForAnnotation(context);
-        this.applyAIResult(annotation, result);
-        await annotation.saveTx();
-
-        const newAIBlock = String(annotation.annotationComment || "").slice(
-          String(annotation.annotationComment || "").lastIndexOf("[AI]")
-        );
-        this.alert(
-          oldAIBlock === newAIBlock
-            ? "重新标注已执行，但模型返回结果与上次相同。"
-            : "重新标注完成。"
-        );
-        return;
-      }
-
-      const outcome = await this.annotateItem(annotation);
-      if (outcome?.status === "done") {
-        this.alert("AI 标注完成。");
-      }
+      await this.annotateItem(annotation, { force });
     } catch (error) {
       Zotero.logError(error);
-      this.alert(`AI 标注失败:\n${error.message || error}`);
+      Zotero.debug(`[Research Highlight AI] Reader annotation failed: ${error}`);
     } finally {
       this.singleRunningIDs.delete(annotationID);
     }
