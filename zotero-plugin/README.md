@@ -8,7 +8,7 @@
 
 Research Highlight AI turns Zotero highlights into structured research objects that are easier to recover and reuse across papers. It adds concise summaries plus Role, Topics, and Use metadata while preserving Zotero as the source of truth.
 
-> **Status:** public beta. Current build: **v0.2.1**.
+> **Status:** public beta. Current build: **v0.2.2**.
 
 ## Product role
 
@@ -165,10 +165,8 @@ The GitHub Actions release pipeline builds the XPI, creates a tagged GitHub Rele
 
 For Zotero 10, install the XPI from **Tools → Plugins**.
 
-## Product direction
+## Next
 
-Research Highlight AI is not positioned as a one-off personal automation. It is one part of a broader research knowledge product focused on structured retrieval, local-first control, provider choice, and a smoother literature workflow.
+Current work focuses on provider validation, annotation reliability, safer Topic Consolidation, setup quality, and tighter integration with the Obsidian Dashboard.
 
-The current priority is reliability and usability for researchers. Broader collaboration or commercial directions may be explored later, but they are not part of the current product promise.
-
-See [`../docs/product.md`](../docs/product.md) for the current product principles and direction.
+See [`../docs/roadmap.md`](../docs/roadmap.md) for the broader roadmap.
