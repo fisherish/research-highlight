@@ -88,6 +88,43 @@ Dashboard 直接读取 ZotLit 的数据。
 
 详见 [`obsidian-plugin/README.md`](obsidian-plugin/README.md)。
 
+## 快速安装
+
+先安装同步所需的两个现成插件：Zotero 里的 **ZotLit Companion**，以及 Obsidian 里的 **ZotLit**。
+
+然后到 [Releases](https://github.com/fisherish/research-highlight/releases) 下载两个文件：
+
+```text
+research-highlight-ai-v*.xpi
+research-highlight-dashboard-v*.zip
+```
+
+Zotero 里打开 **Tools → Plugins**，安装 XPI。
+
+Obsidian 里把 Dashboard ZIP 解压到：
+
+```text
+<你的 vault>/.obsidian/plugins/
+```
+
+然后在 **Settings → Community plugins** 里启用 **Research Highlight Dashboard**。
+
+### 第一次配置 Zotero 插件
+
+打开 **Zotero Settings → Research Highlight AI**。
+
+通常只需要：
+
+1. 选择 Groq、OpenAI 或 OpenRouter；
+2. 填入 API Key；
+3. 点 **测试连接**。
+
+Endpoint 和 Model 会自动填好，一般不用管高级设置。
+
+连接成功以后，需要自动处理新高亮的话，再打开 **自动标注新建高亮**。
+
+完整安装说明见 [`docs/installation.md`](docs/installation.md)。
+
 ## 数据怎么流动
 
 ```text
@@ -106,32 +143,12 @@ Research Highlight Dashboard
 
 Research Highlight 不另外建立一套高亮数据库，也不重新实现 ZotLit 的同步逻辑。
 
-## 模型配置
-
-Zotero 插件目前提供这些 provider 模板：
-
-```text
-Groq
-OpenAI
-OpenRouter
-Custom OpenAI-compatible
-```
-
-Endpoint、API Key 和 Model 都可以自己填写。API Key 保存在 Zotero 本地设置中，不会写进仓库。
-
-## 安装
-
-安装步骤和依赖见 [`docs/installation.md`](docs/installation.md)。
-
-Zotero 插件已经有可用的 GitHub Release 和自动更新通道。Obsidian 插件目前可以作为原生插件运行，公开分发方式还在继续整理。
-
 ## 接下来会做什么
 
-- 简化安装和首次配置；
 - 继续验证不同模型供应商；
 - 改善批量标注、失败重试和错误提示；
 - 给 Topic Consolidator 增加预览和确认；
-- 完善 Obsidian 插件的发布和更新流程；
+- 继续完善 Obsidian 的更新方式；
 - 增强跨论文检索，并继续探索 semantic retrieval、saved views 和跨高亮总结。
 
 详细计划见 [`docs/roadmap.md`](docs/roadmap.md)。
