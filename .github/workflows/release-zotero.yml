@@ -103,13 +103,14 @@ jobs:
           version = os.environ['VERSION']
           tag = os.environ['TAG']
           asset = os.environ['ASSET']
+          repository = os.environ['GITHUB_REPOSITORY']
           data = {
               'addons': {
                   'research-highlight-ai@fisherish.github.io': {
                       'updates': [
                           {
                               'version': version,
-                              'update_link': f'https://github.com/fisherish/research-highlight-toolkit/releases/download/{tag}/{asset}',
+                              'update_link': f'https://github.com/{repository}/releases/download/{tag}/{asset}',
                               'applications': {
                                   'zotero': {
                                       'strict_min_version': '10.0',
