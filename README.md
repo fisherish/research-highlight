@@ -4,7 +4,7 @@ Research Highlight Toolkit packages a working research-reading workflow into two
 
 The goal is simple: turn Zotero highlights into AI-annotated, searchable research notes while keeping **Zotero as the source of truth** and reusing ZotLit for synchronization.
 
-> **Status:** early development. Research Highlight Dashboard v0.1.3 has been validated in the real Obsidian + ZotLit environment. Research Highlight AI v0.1.3 installs successfully in Zotero 10; its manual Batch AI Annotate path is validated end-to-end, and automatic annotation is being re-tested after a preference-reading fix.
+> **Status:** early development. Research Highlight Dashboard v0.1.3 has been validated in the real Obsidian + ZotLit environment. Research Highlight AI v0.1.3 installs successfully in Zotero 10; manual Batch AI Annotate, automatic annotation of newly created highlights, ZotLit/Dashboard propagation, and GitHub Release based automatic plugin updates have all been validated in the real environment.
 
 ## What problem does this solve?
 
@@ -61,13 +61,22 @@ Current v0.1.3 test build includes:
 - Batch AI Annotate for selected items, attachments, or annotations;
 - sequential batch processing with retry/backoff;
 - manually invoked Consolidate AI Topics;
-- settings for API key, model, and automatic annotation.
+- settings for API key, model, and automatic annotation;
+- GitHub Actions release automation and Zotero automatic updates through `updates.json`.
 
-The production AI annotation prompt and Topic Consolidator prompt are now treated as frozen compatibility behavior and must not be rewritten during refactoring.
+The production AI annotation prompt and Topic Consolidator prompt are treated as frozen compatibility behavior and must not be rewritten during refactoring.
 
 The development build defaults **Auto annotate new highlights** to off so it can be tested safely while the old Actions & Tags automation is still installed.
 
-Manual Batch annotation has been validated in the real workflow, including Groq output, comment preservation, tag compatibility, ZotLit transport, and automatic Dashboard refresh.
+Validated in the real workflow:
+
+- manual Batch annotation;
+- automatic annotation of newly created highlights;
+- Groq output and comment preservation;
+- exact tag compatibility;
+- ZotLit transport;
+- automatic Dashboard refresh;
+- GitHub Release based Zotero plugin update discovery and installation.
 
 See [`zotero-plugin/README.md`](zotero-plugin/README.md).
 
@@ -169,10 +178,11 @@ research-highlight-toolkit/
 2. ✅ Validate Dashboard behavior in the real ZotLit environment.
 3. ✅ Package the validated Actions & Tags behavior into Research Highlight AI.
 4. ✅ Validate manual Batch AI Annotate end-to-end in the real Zotero 10 environment.
-5. **Next:** re-test automatic annotation with the v0.1.3 preference fix.
-6. Then validate selected-item / attachment batch collection and the manual Topic Consolidator.
-7. After parity is confirmed, clean up packaging and prepare manual-install releases.
-8. Finally validate the four-plugin workflow on a clean installation.
+5. ✅ Validate automatic annotation of newly created highlights.
+6. ✅ Validate GitHub Release based Zotero automatic updates.
+7. **Next:** validate selected-item / attachment batch collection and the manual Topic Consolidator.
+8. After parity is confirmed, clean up packaging and prepare stable releases.
+9. Finally validate the four-plugin workflow on a clean installation.
 
 ## Installation
 
