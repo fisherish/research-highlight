@@ -8,7 +8,9 @@
 
   <groupbox>
     <label><html:h2 data-l10n-id="research-highlight-ai-prefs-title"/></label>
-    <html:div class="research-highlight-ai-prefs-grid">
+    <html:p class="research-highlight-ai-prefs-intro" data-l10n-id="research-highlight-ai-prefs-intro"/>
+
+    <html:div class="research-highlight-ai-prefs-grid research-highlight-ai-prefs-main-grid">
       <html:label data-l10n-id="research-highlight-ai-prefs-provider" for="research-highlight-ai-provider"/>
       <html:select id="research-highlight-ai-provider"
                    preference="extensions.researchHighlightAI.provider"
@@ -19,12 +21,6 @@
         <html:option value="custom">Custom (OpenAI-compatible)</html:option>
       </html:select>
 
-      <html:label data-l10n-id="research-highlight-ai-prefs-endpoint" for="research-highlight-ai-endpoint"/>
-      <html:input id="research-highlight-ai-endpoint"
-                  type="text"
-                  preference="extensions.researchHighlightAI.endpoint"
-                  native="true"/>
-
       <html:label data-l10n-id="research-highlight-ai-prefs-api-key" for="research-highlight-ai-api-key"/>
       <html:input id="research-highlight-ai-api-key"
                   type="password"
@@ -32,11 +28,13 @@
                   autocomplete="off"
                   native="true"/>
 
-      <html:label data-l10n-id="research-highlight-ai-prefs-model" for="research-highlight-ai-model"/>
-      <html:input id="research-highlight-ai-model"
-                  type="text"
-                  preference="extensions.researchHighlightAI.model"
-                  native="true"/>
+      <html:span></html:span>
+      <html:div class="research-highlight-ai-prefs-test-row">
+        <html:button id="research-highlight-ai-test" type="button" class="research-highlight-ai-test-button">
+          <html:span data-l10n-id="research-highlight-ai-prefs-test"/>
+        </html:button>
+        <html:span id="research-highlight-ai-test-status" class="research-highlight-ai-test-status" aria-live="polite"></html:span>
+      </html:div>
 
       <html:span></html:span>
       <html:label class="research-highlight-ai-prefs-checkbox-row">
@@ -48,10 +46,25 @@
       </html:label>
     </html:div>
 
-    <html:p class="research-highlight-ai-prefs-note" data-l10n-id="research-highlight-ai-prefs-provider-note"/>
-    <html:p class="research-highlight-ai-prefs-note" data-l10n-id="research-highlight-ai-prefs-key-note"/>
-    <html:p class="research-highlight-ai-prefs-note research-highlight-ai-prefs-warning"
-            data-l10n-id="research-highlight-ai-prefs-auto-note"/>
+    <html:p class="research-highlight-ai-prefs-note" data-l10n-id="research-highlight-ai-prefs-quick-note"/>
+
+    <html:details id="research-highlight-ai-advanced" class="research-highlight-ai-prefs-advanced">
+      <html:summary data-l10n-id="research-highlight-ai-prefs-advanced"/>
+      <html:div class="research-highlight-ai-prefs-grid research-highlight-ai-prefs-advanced-grid">
+        <html:label data-l10n-id="research-highlight-ai-prefs-endpoint" for="research-highlight-ai-endpoint"/>
+        <html:input id="research-highlight-ai-endpoint"
+                    type="text"
+                    preference="extensions.researchHighlightAI.endpoint"
+                    native="true"/>
+
+        <html:label data-l10n-id="research-highlight-ai-prefs-model" for="research-highlight-ai-model"/>
+        <html:input id="research-highlight-ai-model"
+                    type="text"
+                    preference="extensions.researchHighlightAI.model"
+                    native="true"/>
+      </html:div>
+      <html:p class="research-highlight-ai-prefs-note" data-l10n-id="research-highlight-ai-prefs-advanced-note"/>
+    </html:details>
   </groupbox>
 
   <script><![CDATA[
@@ -73,9 +86,17 @@
 
       init() {
         const provider = document.getElementById("research-highlight-ai-provider");
+        const testButton = document.getElementById("research-highlight-ai-test");
         if (!provider || provider.dataset.rhaiBound === "true") return;
+
         provider.dataset.rhaiBound = "true";
-        provider.addEventListener("change", () => this.applyPreset(provider.value));
+        provider.addEventListener("change", () => {
+          this.applyPreset(provider.value);
+          this.updateAdvancedState(provider.value);
+          this.clearStatus();
+        });
+        testButton?.addEventListener("click", () => void this.testConnection());
+        this.updateAdvancedState(provider.value);
       },
 
       setBoundValue(element, value) {
@@ -88,14 +109,107 @@
       applyPreset(providerName) {
         const preset = this.presets[providerName];
         if (!preset) return;
-        this.setBoundValue(
-          document.getElementById("research-highlight-ai-endpoint"),
-          preset.endpoint
-        );
-        this.setBoundValue(
-          document.getElementById("research-highlight-ai-model"),
-          preset.model
-        );
+        this.setBoundValue(document.getElementById("research-highlight-ai-endpoint"), preset.endpoint);
+        this.setBoundValue(document.getElementById("research-highlight-ai-model"), preset.model);
+      },
+
+      updateAdvancedState(providerName) {
+        const advanced = document.getElementById("research-highlight-ai-advanced");
+        if (advanced && providerName === "custom") advanced.open = true;
+      },
+
+      clearStatus() {
+        const status = document.getElementById("research-highlight-ai-test-status");
+        if (!status) return;
+        status.textContent = "";
+        status.className = "research-highlight-ai-test-status";
+      },
+
+      setStatusL10n(id, state) {
+        const status = document.getElementById("research-highlight-ai-test-status");
+        if (!status) return;
+        status.textContent = "";
+        status.className = `research-highlight-ai-test-status ${state || ""}`;
+        document.l10n?.setAttributes(status, id);
+      },
+
+      setStatusText(text, state) {
+        const status = document.getElementById("research-highlight-ai-test-status");
+        if (!status) return;
+        status.removeAttribute("data-l10n-id");
+        status.textContent = text;
+        status.className = `research-highlight-ai-test-status ${state || ""}`;
+      },
+
+      async testConnection() {
+        const provider = document.getElementById("research-highlight-ai-provider")?.value || "groq";
+        const endpoint = document.getElementById("research-highlight-ai-endpoint")?.value?.trim() || "";
+        const model = document.getElementById("research-highlight-ai-model")?.value?.trim() || "";
+        const apiKey = document.getElementById("research-highlight-ai-api-key")?.value?.trim() || "";
+        const button = document.getElementById("research-highlight-ai-test");
+
+        if (!endpoint || !model) {
+          this.setStatusL10n("research-highlight-ai-prefs-test-missing-config", "error");
+          return;
+        }
+        if (provider !== "custom" && !apiKey) {
+          this.setStatusL10n("research-highlight-ai-prefs-test-missing-key", "error");
+          return;
+        }
+
+        button.disabled = true;
+        this.setStatusL10n("research-highlight-ai-prefs-testing", "testing");
+
+        const body = {
+          model,
+          temperature: 0,
+          messages: [{ role: "user", content: "Return a JSON object with ok set to true." }],
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: "connection_test",
+              strict: true,
+              schema: {
+                type: "object",
+                additionalProperties: false,
+                properties: { ok: { type: "boolean" } },
+                required: ["ok"],
+              },
+            },
+          },
+        };
+
+        if (provider === "groq") body.reasoning_effort = "none";
+        if (provider === "openrouter") body.provider = { require_parameters: true };
+        if (provider === "openai") body.max_completion_tokens = 32;
+        else body.max_tokens = 32;
+
+        const headers = { "Content-Type": "application/json" };
+        if (apiKey) headers.Authorization = `Bearer ${apiKey}`;
+
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers,
+            body: JSON.stringify(body),
+          });
+
+          if (!response.ok) {
+            const text = (await response.text()).replace(/\s+/g, " ").trim();
+            throw new Error(`HTTP ${response.status}${text ? `: ${text.slice(0, 180)}` : ""}`);
+          }
+
+          const payload = await response.json();
+          const content = payload?.choices?.[0]?.message?.content;
+          const parsed = typeof content === "string" ? JSON.parse(content) : null;
+          if (!parsed || parsed.ok !== true) throw new Error("Unexpected response format");
+
+          this.setStatusL10n("research-highlight-ai-prefs-test-success", "success");
+        } catch (error) {
+          this.setStatusText(String(error?.message || error), "error");
+        } finally {
+          button.disabled = false;
+        }
       },
     };
   ]]></script>
