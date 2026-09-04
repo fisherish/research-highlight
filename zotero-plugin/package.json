@@ -1,10 +1,10 @@
 {
   "name": "research-highlight-ai",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "private": true,
   "description": "Zotero 10 plugin for Research Highlight Toolkit AI annotation workflows.",
   "scripts": {
-    "check": "node --check bootstrap.js && node --check src/core.js && node --check src/annotation.js && node --check src/reader.js && node --check src/batch.js && node --check src/topics.js",
+    "check": "node --check bootstrap.js && node --check src/core.js && node --check src/annotation.js && node --check src/reader.js && node --check src/batch.js && node --check src/topics.js && node --check src/topics-groq.js",
     "build": "python scripts/build_xpi.py"
   }
 }
