@@ -1,0 +1,45 @@
+<vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      class="research-highlight-ai-prefs-root">
+  <linkset>
+    <html:link rel="localization" href="research-highlight-ai.ftl"/>
+  </linkset>
+
+  <groupbox>
+    <label><html:h2 data-l10n-id="research-highlight-ai-prefs-title"/></label>
+    <html:div class="research-highlight-ai-prefs-grid">
+      <html:label data-l10n-id="research-highlight-ai-prefs-provider" for="research-highlight-ai-provider"/>
+      <html:select id="research-highlight-ai-provider"
+                   preference="extensions.researchHighlightAI.provider"
+                   native="true">
+        <html:option value="groq">Groq</html:option>
+      </html:select>
+
+      <html:label data-l10n-id="research-highlight-ai-prefs-api-key" for="research-highlight-ai-api-key"/>
+      <html:input id="research-highlight-ai-api-key"
+                  type="password"
+                  preference="extensions.researchHighlightAI.apiKey"
+                  autocomplete="off"
+                  native="true"/>
+
+      <html:label data-l10n-id="research-highlight-ai-prefs-model" for="research-highlight-ai-model"/>
+      <html:input id="research-highlight-ai-model"
+                  type="text"
+                  preference="extensions.researchHighlightAI.model"
+                  native="true"/>
+
+      <html:span></html:span>
+      <html:label class="research-highlight-ai-prefs-checkbox-row">
+        <html:input id="research-highlight-ai-auto-annotate"
+                    type="checkbox"
+                    preference="extensions.researchHighlightAI.autoAnnotate"
+                    native="true"/>
+        <html:span data-l10n-id="research-highlight-ai-prefs-auto"/>
+      </html:label>
+    </html:div>
+
+    <html:p class="research-highlight-ai-prefs-note" data-l10n-id="research-highlight-ai-prefs-key-note"/>
+    <html:p class="research-highlight-ai-prefs-note research-highlight-ai-prefs-warning"
+            data-l10n-id="research-highlight-ai-prefs-auto-note"/>
+  </groupbox>
+</vbox>
