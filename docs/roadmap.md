@@ -1,6 +1,6 @@
-# Research Highlight — Productization Roadmap
+# Research Highlight — Product Roadmap
 
-This roadmap prioritizes turning the validated workflow into a credible public product before expanding the feature surface.
+This roadmap prioritizes turning the validated workflow into a polished, reliable public research product before expanding the feature surface.
 
 ## Phase 1 — Product foundation
 
@@ -28,9 +28,9 @@ Goal: reduce setup friction and make the product understandable without develope
 - polished screenshots and short product demo
 - GitHub issue templates and support documentation
 
-## Phase 3 — Pro research workflows
+## Phase 3 — Advanced research workflows
 
-Goal: create paid value around retrieval and synthesis rather than restricting basic annotation.
+Goal: make accumulated highlights substantially more useful for real research work.
 
 Candidate capabilities:
 
@@ -44,23 +44,22 @@ Candidate capabilities:
 - reusable research templates
 - direct export into writing workflows
 
-## Phase 4 — Team product
+## Phase 4 — Collaboration and scale
 
-Goal: make Research Highlight useful for laboratories and R&D groups.
+Goal: explore workflows that become useful when several researchers share literature knowledge.
 
 Candidate capabilities:
 
 - shared taxonomies
 - shared highlight collections
 - collaborative evidence boards
-- organization-wide search
 - shared annotation profiles
-- permissions and audit history
-- managed model gateway
-- optional hosted indexing and synchronization services
+- organization-wide retrieval
+- permissions and history
+- optional managed model or indexing infrastructure
 
-## Commercial principle
+## Long-term optional direction
 
-The local-first core should remain genuinely useful on its own. Paid value should come from capabilities that require more coordination, indexing, synthesis, collaboration, or managed infrastructure.
+Research Highlight may eventually have commercial potential, especially around advanced retrieval, collaboration, hosted infrastructure, or managed services. That is not a current requirement and should not drive near-term feature decisions.
 
-This keeps the product's trust model aligned with researchers while leaving a clear path to sustainable Pro and Team offerings.
+The present priority is simpler: build a useful, trustworthy research product that researchers voluntarily keep using.
