@@ -2,25 +2,44 @@
 
 Native Zotero 10 plugin that packages the validated Actions & Tags workflow into an installable plugin.
 
-> Status: early development. Current test build: **v0.1.3**. Manual Batch AI Annotate, automatic annotation of newly created highlights, ZotLit/Dashboard propagation, and GitHub Release based automatic updates have all been validated in the real Zotero 10 environment.
+> Status: beta. Current test build: **v0.1.5**. Manual Batch AI Annotate, automatic annotation of newly created highlights, ZotLit/Dashboard propagation, GitHub Release based automatic updates, and Reader right-click single-highlight annotation are implemented.
 
-## Current v0.1.3 scope
+## Current v0.1.5 scope
 
 - Groq provider with user-supplied API key
 - default model `qwen/qwen3.8-27b`
 - `reasoning_effort: none`
 - strict JSON schema output
 - automatic annotation of newly created highlights through Zotero Notifier
+- Reader context menu action for a single highlight
 - Batch AI Annotate for selected regular items, attachments, or annotations
 - 1500 ms sequential batch delay
 - up to 3 retries for HTTP 429 / 5xx with 5 / 10 / 20 s backoff
-- manual Consolidate AI Topics
+- conservative manual Consolidate AI Topics
 - canonical `[AI]` comment and `ai:*` tag contract
 - preservation of existing manual / translation comments
 - Zotero Item API topic discovery via `annotation.getTags()`
 - GitHub Actions release automation and Zotero automatic updates through `updates.json`
 
 Zotero remains the source of truth. This plugin does not call ZotLit refresh APIs and does not create a separate database.
+
+## Reader single-highlight action
+
+Right-click one text highlight inside the Zotero Reader:
+
+```text
+AI 标注此高亮
+```
+
+The command uses the same annotation pipeline and the same frozen prompt as Auto annotate and Batch AI Annotate.
+
+If the selected highlight already has `ai:done`, the menu changes to:
+
+```text
+重新 AI 标注此高亮
+```
+
+Re-annotation replaces only the generated `[AI]` block and generated `ai:*` tags. Existing manual comments or translations remain preserved.
 
 ## Validated integration status
 
@@ -54,68 +73,22 @@ Zotero update discovery
 plugin update installation
 ```
 
-Validated behavior:
+Validated behavior includes manual Batch annotation, automatic annotation, comment preservation, tag compatibility, ZotLit transport, Dashboard live refresh, and Zotero automatic update discovery/install.
 
-- manual Batch AI Annotate succeeds;
-- automatic annotation of newly created highlights succeeds;
-- Chinese summary is generated normally;
-- existing manual comment / translation content is preserved;
-- `ai:done`, `ai:role:*`, `ai:topic:*`, and `ai:use:*` remain compatible with the original schema;
-- ZotLit transports the saved changes without custom refresh logic;
-- Research Highlight Dashboard updates automatically from the live DB;
-- Zotero can discover and install a newer plugin build from the public GitHub release channel.
+## Frozen annotation prompt
 
-## v0.1.3 auto-annotation fix
+The AI annotation prompt is treated as frozen compatibility behavior.
 
-The v0.1.2 auto-annotation toggle appeared enabled in the preference pane but the runtime read the wrong preference branch. Plugin preferences are stored with full keys such as:
-
-```text
-extensions.researchHighlightAI.autoAnnotate
-```
-
-Zotero's `Zotero.Prefs.get()` prefixes non-global keys with `extensions.zotero.`. v0.1.3 therefore reads plugin preferences with `global=true`:
-
-```js
-Zotero.Prefs.get(key, true)
-```
-
-This applies to Auto annotate, API Key, and Model preference reads. The environment variable `GROQ_API_KEY` remains only as a migration fallback.
-
-## Frozen canonical prompts
-
-The AI annotation prompt and Topic Consolidator prompt have been restored from the user's optimized production prompts and are treated as frozen compatibility behavior.
-
-Do not rewrite, shorten, expand, translate, or otherwise optimize these prompts during refactoring. In particular:
+Do not rewrite, shorten, expand, translate, or otherwise optimize it during refactoring. In particular:
 
 - annotation input is paper title + highlighted text;
 - the annotation prompt specifies 1–3 topics;
-- no paper abstract is added to the annotation prompt;
-- the full retrieval-granularity Topic Consolidator prompt, including the CXCL10/CXCR3 counterexample and umbrella-topic rules, is preserved verbatim.
+- no paper abstract is added;
+- Auto, Batch, and Reader single-highlight annotation all use the same prompt and data contract.
 
-The strict annotation JSON schema is capped at `maxItems: 3` to match the frozen prompt.
+## Topic Consolidator
 
-## Installation fix retained from v0.1.2
-
-The v0.1.0 and v0.1.1 XPIs were rejected before plugin startup because `applications.zotero.update_url` was missing from `manifest.json`. Zotero reported the generic “may be incompatible” installation error. The current build retains the update URL and the Zotero 10 compatibility range `10.0` through `10.0.*`.
-
-## Safety during migration from Actions & Tags
-
-`Auto annotate new highlights` defaults to **off**.
-
-Keep it off while the old Actions & Tags `Create Annotation` action is still active. Otherwise both automations may start an API request for the same newly created highlight before either one has written `ai:done`.
-
-Recommended migration sequence:
-
-1. install the plugin;
-2. enter the Groq API key in Zotero Settings → Research Highlight AI;
-3. test manual Batch AI Annotate;
-4. disable the old Actions & Tags auto action;
-5. enable Auto annotate in Research Highlight AI;
-6. verify new highlights are annotated automatically;
-7. verify ZotLit/Dashboard live propagation;
-8. keep using the GitHub release channel for future plugin updates.
-
-Steps 1 through 8 have now been validated in the real environment.
+The Topic Consolidator is intentionally conservative. Its default is to keep Topics separate unless the merge is high-confidence and would not remove a useful independent retrieval entry. Related molecules, models, states, pathways, readouts, cell subsets, or therapeutic concepts are not merged merely because they occur in the same biological story.
 
 ## Settings
 
@@ -161,7 +134,14 @@ Tools menu:
 - Batch AI Annotate Highlights
 - Consolidate AI Topics
 
-The library item context menu also exposes Batch AI Annotate Highlights.
+Library item context menu:
+
+- Batch AI Annotate Highlights
+
+Zotero Reader annotation context menu:
+
+- AI 标注此高亮
+- 重新 AI 标注此高亮, when `ai:done` already exists
 
 ## Build
 
@@ -173,7 +153,7 @@ npm run build
 The build script uses only Python's standard library and writes:
 
 ```text
-dist/research-highlight-ai-0.1.3.xpi
+dist/research-highlight-ai-0.1.5.xpi
 ```
 
-For Zotero 10, install the XPI from **Tools → Plugins**. Future versions can be delivered through the validated GitHub Release based update channel.
+For Zotero 10, install the XPI from **Tools → Plugins**. Future versions are delivered through the validated GitHub Release based update channel.
