@@ -6,7 +6,27 @@
 
 Research Highlight AI is the Zotero side of Research Highlight. It takes the highlights you already make while reading and adds a short summary plus Role, Topics, and Use metadata.
 
-> **Status:** public beta. Current build: **v0.2.2**.
+> **Status:** public beta. Current build: **v0.2.3**.
+
+## Install
+
+Download the latest `research-highlight-ai-v*.xpi` from the repository's [Releases](https://github.com/fisherish/research-highlight/releases) page.
+
+In Zotero, open **Tools → Plugins** and install the XPI.
+
+## First setup
+
+Open **Zotero Settings → Research Highlight AI**.
+
+For most users the setup is just:
+
+1. choose Groq, OpenAI, or OpenRouter;
+2. paste the API key;
+3. click **Test connection**.
+
+Endpoint and Model are filled automatically. They are kept under **Advanced settings** so you only need to touch them when using a custom endpoint or a specific model.
+
+After the connection test succeeds, enable **Auto annotate new highlights** if you want new highlights processed automatically.
 
 ## What it does
 
@@ -53,7 +73,9 @@ ai:use:discussion
 - structured JSON output validation;
 - Topic Consolidator for duplicate or near-duplicate Topics;
 - sequential batch processing with retry/backoff;
-- editable provider, endpoint, API key, and model settings;
+- Groq, OpenAI, OpenRouter, and Custom OpenAI-compatible providers;
+- connection test in Settings;
+- editable Endpoint and Model under Advanced settings;
 - GitHub Release based automatic updates.
 
 ## Model providers
@@ -78,7 +100,7 @@ Custom OpenAI-compatible
   Model: user supplied
 ```
 
-Endpoint and Model are editable. Custom can point to another compatible gateway or a local service. API keys are stored in Zotero preferences and are not included in the repository.
+API keys are stored in Zotero preferences and are not included in the repository. Custom can point to another compatible gateway or a local service.
 
 The Groq path has been tested end to end. The other provider templates are already supported and will continue to be checked with real credentials.
 
@@ -114,10 +136,4 @@ npm run build
 
 The GitHub Actions workflow builds the XPI, creates a GitHub Release, updates `updates.json`, and feeds Zotero's automatic update channel.
 
-For Zotero 10, install the XPI from **Tools → Plugins**.
-
-## Next
-
-Current work is focused on provider testing, annotation reliability, safer Topic Consolidation, and setup quality.
-
-See [`../docs/roadmap.md`](../docs/roadmap.md).
+See [`../docs/installation.md`](../docs/installation.md) for the complete Zotero + Obsidian setup.
