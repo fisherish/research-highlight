@@ -8,7 +8,7 @@
 
 Research Highlight AI turns Zotero highlights into structured research objects that are easier to recover and reuse across papers. It adds concise summaries plus Role, Topics, and Use metadata while preserving Zotero as the source of truth.
 
-> **Status:** public beta. Current build: **v0.2.0**.
+> **Status:** public beta. Current build: **v0.2.1**.
 
 ## Product role
 
@@ -106,6 +106,7 @@ API credentials are stored locally in Zotero preferences and are never included 
 - retrieval-oriented Topic Consolidator;
 - sequential batch processing with retry/backoff;
 - editable provider, endpoint, API key, and model settings;
+- shared Research Highlight product icon packaged in the XPI;
 - GitHub Release based automatic updates.
 
 The original Groq path has been validated end-to-end in the real Zotero → ZotLit → Obsidian workflow. Additional provider templates are beta paths until individually validated with production credentials.
@@ -129,6 +130,8 @@ Research Highlight AI uses the same product identity as Research Highlight Dashb
 Canonical brand asset:
 
 `../assets/brand/research-highlight-icon.svg`
+
+The same vector mark is also packaged as `zotero-plugin/icon.svg`.
 
 Brand guidance: [`../docs/brand.md`](../docs/brand.md).
 
