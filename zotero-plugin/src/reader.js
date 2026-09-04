@@ -33,6 +33,12 @@ Object.assign(ResearchHighlightAI, {
         label: alreadyDone ? "重新 AI 标注此高亮" : "AI 标注此高亮",
         onCommand: () => void this.runSingleAnnotation(annotation.id, alreadyDone),
       });
+
+      const autoAnnotate = this.getPrefBool(this.PREFS.autoAnnotate, false);
+      append({
+        label: autoAnnotate ? "关闭自动标注新建高亮" : "开启自动标注新建高亮",
+        onCommand: () => this.toggleAutoAnnotateFromReader(),
+      });
     };
 
     Zotero.Reader.registerEventListener(
@@ -55,6 +61,13 @@ Object.assign(ResearchHighlightAI, {
     this.readerContextMenuHandler = null;
   },
 
+  toggleAutoAnnotateFromReader() {
+    const current = this.getPrefBool(this.PREFS.autoAnnotate, false);
+    const next = !current;
+    Zotero.Prefs.set(this.PREFS.autoAnnotate, next, true);
+    this.alert(next ? "已开启自动标注新建高亮。" : "已关闭自动标注新建高亮。");
+  },
+
   async runSingleAnnotation(annotationID, force = false) {
     if (!annotationID || this.singleRunningIDs.has(annotationID)) return;
     this.singleRunningIDs.add(annotationID);
@@ -68,14 +81,29 @@ Object.assign(ResearchHighlightAI, {
       if (!String(annotation.annotationText || "").trim()) return;
 
       if (force && this.hasTag(annotation, "ai:done")) {
+        const oldAIBlock = String(annotation.annotationComment || "").slice(
+          String(annotation.annotationComment || "").lastIndexOf("[AI]")
+        );
         const context = await this.getAnnotationContext(annotation);
         const result = await this.callGroqForAnnotation(context);
         this.applyAIResult(annotation, result);
         await annotation.saveTx();
+
+        const newAIBlock = String(annotation.annotationComment || "").slice(
+          String(annotation.annotationComment || "").lastIndexOf("[AI]")
+        );
+        this.alert(
+          oldAIBlock === newAIBlock
+            ? "重新标注已执行，但模型返回结果与上次相同。"
+            : "重新标注完成。"
+        );
         return;
       }
 
-      await this.annotateItem(annotation);
+      const outcome = await this.annotateItem(annotation);
+      if (outcome?.status === "done") {
+        this.alert("AI 标注完成。");
+      }
     } catch (error) {
       Zotero.logError(error);
       this.alert(`AI 标注失败:\n${error.message || error}`);
