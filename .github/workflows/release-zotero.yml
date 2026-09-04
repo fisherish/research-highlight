@@ -54,7 +54,9 @@ jobs:
           cd zotero-plugin
           node --check bootstrap.js
           node --check src/core.js
+          node --check src/provider.js
           node --check src/annotation.js
+          node --check src/annotation-provider.js
           node --check src/reader.js
           node --check src/batch.js
           node --check src/topics.js
