@@ -114,22 +114,19 @@ Dashboard 为同一批科研高亮提供两种查看方式：
 
 详见 [`obsidian-plugin/README.md`](obsidian-plugin/README.md)。
 
-## 当前产品方向
+## 接下来
 
-Research Highlight 的目标不是维护一组个人脚本，而是逐步把这套工作流做成一个完整、稳定、别人也可以长期使用的科研软件产品。
+下一阶段重点包括：
 
-当前优先级仍然是产品质量，而不是商业化：
+- 完善安装和首次配置流程；
+- 验证并优化 Groq、OpenAI、OpenRouter 和 Custom provider；
+- 提高自动标注、单条标注和批量标注的稳定性与错误处理；
+- 为 Topic Consolidator 增加更安全的预览与确认流程；
+- 统一 Zotero 与 Obsidian 两端的图标、文案和交互细节；
+- 完善 Obsidian 插件的公开分发和更新流程；
+- 继续增强跨文献高亮检索，并探索 semantic retrieval、saved research views、跨高亮 synthesis 和协作式科研工作流。
 
-- 降低安装和配置成本；
-- 提高 AI 标注稳定性；
-- 完善不同模型供应商支持；
-- 让 Zotero 与 Obsidian 两端体验保持一致；
-- 改善 Topic vocabulary 管理；
-- 让积累多年的文献高亮真正容易重新找到。
-
-更长期可以继续探索 semantic retrieval、saved research views、跨高亮 synthesis、协作式科研工作流等方向。商业化只是未来的一种潜在可能，并不是当前项目定位。
-
-产品原则与路线图见 [`docs/product.md`](docs/product.md) 和 [`docs/roadmap.md`](docs/roadmap.md)。
+详细路线图见 [`docs/roadmap.md`](docs/roadmap.md)。
 
 ## 品牌与图标
 
