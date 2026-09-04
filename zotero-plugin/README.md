@@ -1,150 +1,47 @@
+<p align="center">
+  <img src="../assets/brand/research-highlight-icon.svg" width="112" alt="Research Highlight icon" />
+</p>
+
 # Research Highlight AI
 
-Native Zotero 10 plugin that packages the validated Actions & Tags workflow into an installable plugin.
+**The capture and enrichment layer for Research Highlight.**
 
-> Status: beta. Current build: **v0.2.0**. Manual Batch AI Annotate, automatic annotation of newly created highlights, ZotLit/Dashboard propagation, GitHub Release based automatic updates, Reader right-click single-highlight annotation, and configurable model providers are implemented.
+Research Highlight AI turns Zotero highlights into structured research objects that are easier to recover and reuse across papers. It adds concise summaries plus Role, Topics, and Use metadata while preserving Zotero as the source of truth.
 
-## Current v0.2.0 scope
+> **Status:** public beta. Current build: **v0.2.0**.
 
-- provider templates for Groq, OpenAI, and OpenRouter
-- editable API Endpoint, API Key, and Model fields
-- Custom OpenAI-compatible Chat Completions endpoint support
-- no preset Anthropic provider
-- Groq default model `qwen/qwen3.8-27b`
-- OpenAI template model `gpt-4.1-mini`
-- OpenRouter template model `openai/gpt-oss-20b`
-- strict JSON Schema structured output contract
-- automatic annotation of newly created highlights through Zotero Notifier
-- Reader context menu action for a single highlight
-- Reader context menu switch for Auto annotate
-- Batch AI Annotate for selected regular items, attachments, or annotations
-- 1500 ms sequential batch delay
-- up to 3 retries for HTTP 429 / 5xx with 5 / 10 / 20 s backoff
-- manual Consolidate AI Topics with an 800-token output budget
-- canonical `[AI]` comment and `ai:*` tag contract
-- preservation of existing manual / translation comments
-- Zotero Item API topic discovery via `annotation.getTags()`
-- GitHub Actions release automation and Zotero automatic updates through `updates.json`
+## Product role
 
-Zotero remains the source of truth. This plugin does not call ZotLit refresh APIs and does not create a separate database.
-
-## Provider templates
-
-The Settings pane provides these presets:
+Research Highlight AI is the Zotero client of the broader **Research Highlight** product.
 
 ```text
-Groq
-  Endpoint: https://api.groq.com/openai/v1/chat/completions
-  Model: qwen/qwen3.8-27b
-
-OpenAI
-  Endpoint: https://api.openai.com/v1/chat/completions
-  Model: gpt-4.1-mini
-
-OpenRouter
-  Endpoint: https://openrouter.ai/api/v1/chat/completions
-  Model: openai/gpt-oss-20b
-
-Custom (OpenAI-compatible)
-  Endpoint: user supplied
-  Model: user supplied
-```
-
-Selecting a preset fills its endpoint and suggested model. Endpoint and Model remain editable. Custom is intended for OpenAI Chat Completions-compatible services that support JSON Schema Structured Outputs. A Custom endpoint may leave API Key blank when the local or private service does not require authentication.
-
-The plugin intentionally does not ship an Anthropic provider preset. Users may still choose any model exposed through a compatible router or custom endpoint if they configure it themselves.
-
-## Reader single-highlight action
-
-Right-click one text highlight inside the Zotero Reader:
-
-```text
-AI 标注此高亮
-```
-
-The command uses the same annotation pipeline and the same frozen prompt as Auto annotate and Batch AI Annotate.
-
-If the selected highlight already has `ai:done`, the menu changes to:
-
-```text
-重新 AI 标注此高亮
-```
-
-Re-annotation replaces only the generated `[AI]` block and generated `ai:*` tags. Existing manual comments or translations remain preserved.
-
-The same Reader context menu also exposes:
-
-```text
-开启自动标注新建高亮
-关闭自动标注新建高亮
-```
-
-These Reader actions execute without blocking confirmation popups.
-
-## Validated integration status
-
-The following paths have been tested successfully in the real environment:
-
-```text
-New Zotero highlight
+Highlight in Zotero
     ↓
-Research Highlight AI automatic annotation
+Research Highlight AI
+    ↓
+summary + role + topics + use
     ↓
 Zotero annotation comment + ai:* tags
     ↓
-ZotLit Companion
-    ↓
-ZotLit live database
+ZotLit transport
     ↓
 Research Highlight Dashboard
 ```
 
-and:
+The plugin does not create a parallel highlight database and does not call ZotLit refresh APIs.
 
-```text
-GitHub version bump
-    ↓
-GitHub Actions build/release
-    ↓
-updates.json
-    ↓
-Zotero update discovery
-    ↓
-plugin update installation
-```
+## Core experience
 
-The original Groq path has been validated end-to-end. Additional provider templates should be treated as newly added v0.2.0 paths until tested with real credentials.
+Research Highlight AI is designed to stay close to normal reading behavior:
 
-## Frozen annotation prompt
+- create a highlight and let Auto annotate process it;
+- right-click a highlight for single-item AI annotation or re-annotation;
+- batch-process a selected paper, attachment, or annotation set;
+- consolidate near-duplicate Topics when the vocabulary grows.
 
-The AI annotation prompt is treated as frozen compatibility behavior.
+Existing manual comments and translations are preserved.
 
-Do not rewrite, shorten, expand, translate, or otherwise optimize it during refactoring. In particular:
-
-- annotation input is paper title + highlighted text;
-- the annotation prompt specifies 1–3 topics;
-- no paper abstract is added;
-- Auto, Batch, and Reader single-highlight annotation all use the same prompt and data contract.
-
-## Topic Consolidator
-
-The Topic Consolidator uses a retrieval-oriented middle-ground policy: it actively removes near-duplicate naming fragments while preserving useful distinctions between different molecules, cell states, models, mechanisms, readouts, diseases, therapies, and engineered constructs.
-
-Its output is capped at 800 tokens to stay below the validated Groq on-demand OTPM ceiling encountered during testing.
-
-## Settings
-
-```text
-Provider: Groq / OpenAI / OpenRouter / Custom
-API Endpoint: editable
-API Key: editable
-Model: editable
-Auto annotate new highlights: on/off
-```
-
-The API key is stored locally in Zotero preferences and is never included in this repository. Provider-specific environment variables are accepted as fallbacks for Groq (`GROQ_API_KEY`), OpenAI (`OPENAI_API_KEY`), and OpenRouter (`OPENROUTER_API_KEY`).
-
-## Data contract
+## Structured research metadata
 
 Canonical comment:
 
@@ -168,7 +65,72 @@ ai:topic:tumor-microenvironment
 ai:use:discussion
 ```
 
-See `../docs/data-contract.md` for compatibility rules.
+This contract is intentionally human-readable and portable.
+
+## Model providers
+
+Research Highlight AI is provider-flexible rather than tied to a single model vendor.
+
+Current templates:
+
+```text
+Groq
+  Endpoint: https://api.groq.com/openai/v1/chat/completions
+  Suggested model: qwen/qwen3.8-27b
+
+OpenAI
+  Endpoint: https://api.openai.com/v1/chat/completions
+  Suggested model: gpt-4.1-mini
+
+OpenRouter
+  Endpoint: https://openrouter.ai/api/v1/chat/completions
+  Suggested model: openai/gpt-oss-20b
+
+Custom OpenAI-compatible
+  Endpoint: user supplied
+  Model: user supplied
+```
+
+Endpoint and Model remain editable. Custom endpoints can be used for compatible gateways or local services. The plugin intentionally does not ship an Anthropic preset.
+
+API credentials are stored locally in Zotero preferences and are never included in this repository.
+
+## Current capabilities
+
+- automatic annotation of newly created text highlights;
+- Reader context-menu annotation and re-annotation;
+- Reader context-menu switch for Auto annotate;
+- Batch AI Annotate for regular items, attachments, or annotations;
+- structured JSON output validation;
+- preservation of manual comments and translations;
+- retrieval-oriented Topic Consolidator;
+- sequential batch processing with retry/backoff;
+- editable provider, endpoint, API key, and model settings;
+- GitHub Release based automatic updates.
+
+The original Groq path has been validated end-to-end in the real Zotero → ZotLit → Obsidian workflow. Additional provider templates are beta paths until individually validated with production credentials.
+
+## Annotation behavior
+
+Auto, Batch, and Reader single-highlight annotation share the same production annotation logic and data contract.
+
+The current production annotation prompt is treated as compatibility-sensitive behavior. Refactoring should not silently rewrite it or add extra paper context such as the abstract.
+
+## Topic Consolidator
+
+The Topic Consolidator is designed to reduce vocabulary fragmentation without flattening scientifically useful distinctions.
+
+It can consolidate near-duplicate naming variants while preserving meaningful differences between molecules, cell states, models, mechanisms, readouts, diseases, therapies, and engineered constructs.
+
+## Shared brand
+
+Research Highlight AI uses the same product identity as Research Highlight Dashboard for Obsidian.
+
+Canonical brand asset:
+
+`../assets/brand/research-highlight-icon.svg`
+
+Brand guidance: [`../docs/brand.md`](../docs/brand.md).
 
 ## Menus
 
@@ -184,20 +146,24 @@ Library item context menu:
 Zotero Reader annotation context menu:
 
 - AI 标注此高亮
-- 重新 AI 标注此高亮, when `ai:done` already exists
-- 开启/关闭自动标注新建高亮
+- 重新 AI 标注此高亮
+- 开启 / 关闭自动标注新建高亮
 
-## Build
+Reader actions run without blocking success popups.
+
+## Build and distribution
 
 ```bash
 npm run check
 npm run build
 ```
 
-The build script uses only Python's standard library and writes:
+The GitHub Actions release pipeline builds the XPI, creates a tagged GitHub Release, updates `updates.json`, and feeds Zotero's automatic update channel.
 
-```text
-dist/research-highlight-ai-0.2.0.xpi
-```
+For Zotero 10, install the XPI from **Tools → Plugins**.
 
-For Zotero 10, install the XPI from **Tools → Plugins**. Future versions are delivered through the validated GitHub Release based update channel.
+## Product direction
+
+Research Highlight AI is not positioned as a one-off personal automation. It is the enrichment surface of a broader research knowledge product focused on structured retrieval, local-first control, provider choice, and future Pro / Team workflows.
+
+See [`../docs/product.md`](../docs/product.md) for the product strategy and commercial direction.
