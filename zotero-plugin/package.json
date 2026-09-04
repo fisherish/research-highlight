@@ -1,6 +1,6 @@
 {
   "name": "research-highlight-ai",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
   "description": "Zotero 10 plugin for Research Highlight Toolkit AI annotation workflows.",
   "scripts": {
