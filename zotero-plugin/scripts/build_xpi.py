@@ -11,6 +11,7 @@ out_path = out_dir / f"research-highlight-ai-{version}.xpi"
 
 files = [
     "manifest.json",
+    "icon.svg",
     "bootstrap.js",
     "src/core.js",
     "src/provider.js",
