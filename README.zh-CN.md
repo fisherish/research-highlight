@@ -4,11 +4,7 @@
 
 <h1 align="center">Research Highlight</h1>
 
-<p align="center"><strong>把文献高亮变成可重复利用的科研知识。</strong></p>
-
-<p align="center">
-  面向 Zotero 与 Obsidian 的本地优先科研知识层。
-</p>
+<p align="center"><strong>把 Zotero 里的文献高亮整理成以后真正找得到、用得上的资料。</strong></p>
 
 <p align="center">
   <a href="README.md">English</a> · <strong>简体中文</strong>
@@ -16,163 +12,135 @@
 
 ---
 
-科研人员在阅读论文并划下高亮时，其实已经完成了一次最重要的信息筛选：**判断什么值得以后再看。**
+Research Highlight 是一套连接 Zotero 和 Obsidian 的文献高亮整理工具。
 
-**Research Highlight** 在这个动作之后继续工作。它为高亮补充结构化 AI 元数据，并把原本散落在不同论文里的重要段落变成可以跨文献检索、回顾和重新利用的科研知识。
+平时怎么读论文，不需要改。照常在 Zotero 里划高亮，Research Highlight AI 会给这段文字补上一条简短摘要，再标记它属于什么类型、讲了什么主题、以后可能用在哪里。随后这些信息通过 ZotLit 出现在 Obsidian 的 Dashboard 里，可以跨论文搜索和筛选。
 
-目前项目由两个相互配合的插件组成：
+它主要解决一个很实际的问题：论文读多以后，高亮会越来越多。几个月后往往只记得“我以前见过这个结论”，却想不起是哪篇文章、哪一段。
 
-| 使用端 | 模块 | 作用 |
+Research Highlight 直接整理你已经划下来的高亮，不要求再手工维护另一套笔记。
+
+## 目前由两个插件组成
+
+| 软件 | 插件 | 作用 |
 | --- | --- | --- |
-| Zotero | **Research Highlight AI** | 为高亮生成摘要、知识类型、主题和未来用途等结构化信息 |
-| Obsidian | **Research Highlight Dashboard** | 跨论文搜索、筛选、回顾高亮，并快速跳回 Zotero 原文 |
+| Zotero | **Research Highlight AI** | 给高亮生成摘要、Role、Topics 和 Use |
+| Obsidian | **Research Highlight Dashboard** | 搜索、筛选、查看这些高亮，并跳回 Zotero 原文 |
 
-Zotero 始终是数据的 **source of truth**。ZotLit Companion 与 ZotLit 目前负责 Zotero 和 Obsidian 之间的数据同步。
+Zotero annotation 仍然保存原始内容。ZotLit Companion 和 ZotLit 负责把数据带到 Obsidian。
 
-## Research Highlight 做什么
+## 一条高亮会被整理成什么样
 
-一条普通高亮不再只是某篇 PDF 里的一句彩色文字，而会变成一个结构化的科研信息单元：
-
-```text
-Zotero 高亮
-    ↓
-Research Highlight AI
-    ↓
-summary + role + topics + use
-    ↓
-Zotero annotation metadata
-    ↓
-ZotLit Companion / ZotLit
-    ↓
-Research Highlight Dashboard
-    ↓
-搜索 · 筛选 · 回顾 · 跳回 Zotero
-```
-
-生成的信息会直接保存在 Zotero annotation 中，人可以直接阅读：
+例如你划下一段关于 CAR-T 细胞在实体瘤中受限的文字，插件会在 annotation comment 里加入类似这样的内容：
 
 ```text
 [AI]
-中文 summary
+实体瘤中的免疫抑制性微环境和浸润障碍会限制 CAR-T 细胞功能，是当前治疗效果受限的重要原因。
 
 Role: limitation
 Topics: CAR-T cells, solid tumors, tumor microenvironment
 Use: discussion
 ```
 
-同时也会以统一的 `ai:*` tags 保存，用于后续检索和筛选。
+同时会写入对应的 tags：
 
-## 设计理念
+```text
+ai:done
+ai:role:limitation
+ai:topic:CAR-T-cells
+ai:topic:solid-tumors
+ai:topic:tumor-microenvironment
+ai:use:discussion
+```
 
-**从高亮开始，而不是从整篇 PDF 开始。** Research Highlight 只处理研究者主动保存的内容，不把一篇论文中的每一句话都当成同等重要的信息。
-
-**不只是摘要，而是结构化。** 每条高亮不仅可以有简短总结，还可以获得 Role、Topics 和 Use 等长期可检索字段。
-
-**Zotero 仍然是数据中心。** 插件直接增强已有 annotation，不建立第二套高亮数据库，也不会把用户锁在新的数据格式里。
-
-**Local-first。** 核心科研元数据保存在用户已有的 Zotero / Obsidian 工作流中，不依赖专有云端数据库。
-
-**模型供应商可替换。** Research Highlight AI 支持 Groq、OpenAI、OpenRouter，以及自定义 OpenAI-compatible 接口。API Key 保存在本地 Zotero preferences 中。
-
-**数据结构可读、可迁移。** annotation comment 与 `ai:*` tags 都是明确可检查的格式，未来也可以被其他工具继续消费。
+以后可以按“某个分子”“某类细胞”“机制”“局限”“方法”这些线索重新把它找出来，而不是只能靠记住论文标题。
 
 ## Research Highlight AI for Zotero
 
-当前已经实现：
+目前支持：
 
-- 新建高亮后自动进行 AI 标注；
-- 在 Zotero Reader 中右键单条高亮进行 AI 标注或重新标注；
-- 对整篇文献、PDF attachment 或 annotation 批量处理；
-- 保留原有手工 comment 与翻译内容；
-- 生成结构化 `summary / role / topics / use`；
-- Topic Consolidator，用于减少无意义的 Topic 碎片化；
-- Groq、OpenAI、OpenRouter 与 Custom OpenAI-compatible provider；
-- 可编辑 API Endpoint、API Key 和 Model；
-- 基于 GitHub Release 的 Zotero 自动更新。
+- 新建文字高亮后自动进行 AI 标注；
+- 在 Zotero Reader 里右键单条高亮进行标注或重新标注；
+- 对文献、PDF attachment 或 annotation 批量处理；
+- 保留已有的手工 comment 和翻译；
+- 输出 `summary / role / topics / use`；
+- Topic Consolidator，用来合并明显重复或近似的 Topic；
+- Groq、OpenAI、OpenRouter 和 Custom OpenAI-compatible provider；
+- 自定义 API Endpoint、API Key 和 Model；
+- 基于 GitHub Release 的自动更新。
 
-目前 Groq 路径已经在真实的 Zotero → ZotLit → Obsidian 工作流中完成端到端验证。其他 provider 模板属于新加入的 beta 路径，仍需要分别使用真实凭证继续验证。
+目前 Groq 路径已经完成真实环境下的端到端验证。其他 provider 已经接入，后续会继续逐个验证兼容性。
 
 详见 [`zotero-plugin/README.md`](zotero-plugin/README.md)。
 
 ## Research Highlight Dashboard for Obsidian
 
-Dashboard 为同一批科研高亮提供两种查看方式：
+Dashboard 直接读取 ZotLit 的数据。
 
-**Reader** 更适合逐条阅读和检查证据；**Sticky** 更适合在一个高密度视图里快速扫过大量高亮。
+目前有两种查看方式：
 
-当前已经支持：
+- **Reader**：适合逐条看摘要、高亮原文和论文信息；
+- **Sticky**：适合一次铺开很多条高亮，快速扫某个主题下的材料。
 
-- 全文搜索；
-- Role / Use / Topic 筛选；
-- 多种排序方式；
-- Zotero annotation 深链接；
-- ZotLit 数据变化后的实时刷新；
-- 响应式 Sticky 多列布局；
-- Auto / Eye / Dark 三种显示模式。
+可以按关键词、Role、Use 和 Topic 搜索或筛选，也可以按添加时间、修改时间、论文标题等排序。每条高亮都可以直接跳回 Zotero 原位置。
 
-生产版本不依赖 Dataview。
+在 Zotero 里新增、修改或删除高亮后，Dashboard 会跟着刷新。
 
 详见 [`obsidian-plugin/README.md`](obsidian-plugin/README.md)。
 
-## 接下来
-
-下一阶段重点包括：
-
-- 完善安装和首次配置流程；
-- 验证并优化 Groq、OpenAI、OpenRouter 和 Custom provider；
-- 提高自动标注、单条标注和批量标注的稳定性与错误处理；
-- 为 Topic Consolidator 增加更安全的预览与确认流程；
-- 统一 Zotero 与 Obsidian 两端的图标、文案和交互细节；
-- 完善 Obsidian 插件的公开分发和更新流程；
-- 继续增强跨文献高亮检索，并探索 semantic retrieval、saved research views、跨高亮 synthesis 和协作式科研工作流。
-
-详细路线图见 [`docs/roadmap.md`](docs/roadmap.md)。
-
-## 品牌与图标
-
-Research Highlight 在 Zotero 与 Obsidian 两端使用统一品牌。当前标志由三个核心元素组成：研究文档、一条高亮，以及结构化数据图形。
-
-品牌资源与使用规范见 [`docs/brand.md`](docs/brand.md)。
-
-## 架构
+## 数据怎么流动
 
 ```text
-Zotero
-├─ ZotLit Companion
-└─ Research Highlight AI
-          │
-          │ annotation comment + ai:* tags
-          ▼
-      ZotLit transport
-          │
-          ▼
-Obsidian
-├─ ZotLit
-└─ Research Highlight Dashboard
+在 Zotero 里划高亮
+        ↓
+Research Highlight AI
+        ↓
+comment + ai:* tags
+        ↓
+ZotLit Companion / ZotLit
+        ↓
+Research Highlight Dashboard
+        ↓
+搜索、筛选、查看、跳回 Zotero
 ```
 
-Research Highlight 有意避免重新制造已经存在的基础设施，因此：
+Research Highlight 不另外建立一套高亮数据库，也不重新实现 ZotLit 的同步逻辑。
 
-- 不创建项目专用 `highlights.json`；
-- 不建立第二套 custom SQLite highlight database；
-- 不在 AI 插件里重复实现 ZotLit synchronization；
-- Zotero annotation 始终是核心数据记录。
+## 模型配置
 
-详细架构见 [`docs/architecture.md`](docs/architecture.md)。
+Zotero 插件目前提供这些 provider 模板：
 
-数据格式见 [`docs/data-contract.md`](docs/data-contract.md)。
+```text
+Groq
+OpenAI
+OpenRouter
+Custom OpenAI-compatible
+```
+
+Endpoint、API Key 和 Model 都可以自己填写。API Key 保存在 Zotero 本地设置中，不会写进仓库。
 
 ## 安装
 
-安装步骤和依赖关系见 [`docs/installation.md`](docs/installation.md)。
+安装步骤和依赖见 [`docs/installation.md`](docs/installation.md)。
 
-Zotero 插件已经具备并验证了基于 GitHub Release 的自动更新机制。Obsidian 插件目前已经是原生插件结构，后续还会继续完善公开分发方式。
+Zotero 插件已经有可用的 GitHub Release 和自动更新通道。Obsidian 插件目前可以作为原生插件运行，公开分发方式还在继续整理。
+
+## 接下来会做什么
+
+- 简化安装和首次配置；
+- 继续验证不同模型供应商；
+- 改善批量标注、失败重试和错误提示；
+- 给 Topic Consolidator 增加预览和确认；
+- 完善 Obsidian 插件的发布和更新流程；
+- 增强跨论文检索，并继续探索 semantic retrieval、saved views 和跨高亮总结。
+
+详细计划见 [`docs/roadmap.md`](docs/roadmap.md)。
 
 ## 当前状态
 
-**Public Beta。**
+目前处于 **Public Beta**。
 
-以下核心链路已经在真实环境中验证：
+下面这条完整链路已经实际跑通：
 
 ```text
 Zotero highlight
@@ -186,24 +154,16 @@ ZotLit
 Obsidian Dashboard live refresh
 ```
 
-Zotero 插件的 GitHub Release 自动更新链也已经跑通。
-
-下一阶段重点是进一步完善产品包装、provider 验证、Topic 管理安全性、双端品牌一致性，以及更稳定的公开分发体验。
+Zotero 插件的 GitHub Release 和自动更新也已经验证可用。
 
 ## 仓库结构
 
 ```text
 research-highlight/
-├─ assets/brand/
+├─ assets/
 ├─ zotero-plugin/
 ├─ obsidian-plugin/
 ├─ docs/
-│  ├─ product.md
-│  ├─ roadmap.md
-│  ├─ brand.md
-│  ├─ architecture.md
-│  ├─ data-contract.md
-│  └─ installation.md
 ├─ LICENSE
 ├─ README.md
 └─ README.zh-CN.md
@@ -211,6 +171,4 @@ research-highlight/
 
 ## License
 
-Research Highlight 采用 [Apache License 2.0](LICENSE)。
-
-该许可证允许使用、修改、分发和商业使用，同时要求保留必要的版权与许可证声明，并包含明确的专利授权条款。
+Research Highlight 使用 [Apache License 2.0](LICENSE)。
