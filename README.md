@@ -10,6 +10,10 @@
   A local-first research knowledge layer for Zotero and Obsidian.
 </p>
 
+<p align="center">
+  <strong>English</strong> · <a href="README.zh-CN.md">简体中文</a>
+</p>
+
 ---
 
 Researchers already decide what matters when they highlight a paper. **Research Highlight** captures that intent, adds structured AI metadata, and makes important passages retrievable across papers without forcing a second note-taking workflow.
