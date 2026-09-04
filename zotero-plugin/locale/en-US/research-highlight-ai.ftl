@@ -1,0 +1,11 @@
+research-highlight-ai-menu-batch =
+    .label = Batch AI Annotate Highlights
+research-highlight-ai-menu-consolidate =
+    .label = Consolidate AI Topics
+research-highlight-ai-prefs-title = Research Highlight AI
+research-highlight-ai-prefs-provider = Provider
+research-highlight-ai-prefs-api-key = API Key
+research-highlight-ai-prefs-model = Model
+research-highlight-ai-prefs-auto = Auto annotate new highlights
+research-highlight-ai-prefs-key-note = The API key is stored locally in Zotero preferences and is never written to the repository.
+research-highlight-ai-prefs-auto-note = Keep this off while the old Actions & Tags auto-annotation action is still enabled, or both automations may process the same highlight.
