@@ -58,6 +58,7 @@ jobs:
           node --check src/reader.js
           node --check src/batch.js
           node --check src/topics.js
+          node --check src/topics-groq.js
           python -m json.tool manifest.json >/dev/null
           python -m json.tool package.json >/dev/null
 
