@@ -1,55 +1,57 @@
 # Research Highlight AI
 
-Research Highlight AI is the planned Zotero plugin for converting newly created or existing Zotero highlights into structured, retrieval-friendly AI annotations.
+Native Zotero 10 plugin that packages the already validated Actions & Tags workflow into an installable plugin.
 
-It packages behavior that has already been validated in Zotero 10 through Actions & Tags 2.6.1.
+> Status: early development. Current test build: **v0.1.0**.
 
-> **Status:** early development. The native Zotero plugin has not yet been implemented in this repository.
+## Current v0.1.0 scope
 
-## Role in the system
+- Groq provider with user-supplied API key
+- default model `qwen/qwen3.8-27b`
+- `reasoning_effort: none`
+- strict JSON schema output
+- automatic annotation of newly created highlights through Zotero Notifier
+- Batch AI Annotate for selected regular items, attachments, or annotations
+- 1500 ms sequential batch delay
+- up to 3 retries for HTTP 429 / 5xx with 5 / 10 / 20 s backoff
+- manual Consolidate AI Topics
+- exact `[AI]` comment and `ai:*` tag contract
+- preservation of existing manual / translation comments
+- Zotero Item API topic discovery via `annotation.getTags()`
 
-```text
-Zotero highlight
-    ↓
-Research Highlight AI
-    ↓
-annotation comment + ai:* tags
-    ↓
-ZotLit Companion
-```
+Zotero remains the source of truth. This plugin does not call ZotLit refresh APIs and does not create a separate database.
 
-Zotero remains the source of truth.
+## Safety during migration from Actions & Tags
 
-Research Highlight AI writes results back to the Zotero annotation. It does not maintain a separate highlight database and does not directly control ZotLit synchronization.
+`Auto annotate new highlights` defaults to **off** in v0.1.0.
 
-## Planned features
+Keep it off while the old Actions & Tags `Create Annotation` action is still active. Otherwise both automations may start an API request for the same newly created highlight before either one has written `ai:done`.
 
-### Automatic AI annotation
+Recommended migration test:
 
-When enabled, the plugin should react to newly created highlight annotations and:
+1. install the plugin;
+2. enter the Groq API key in Zotero Settings → Research Highlight AI;
+3. leave Auto annotate off;
+4. test **Batch AI Annotate Highlights** on one known highlight that does not have `ai:done`;
+5. compare the generated comment and tags with the old Actions & Tags output;
+6. disable the old Actions & Tags auto action;
+7. enable Auto annotate in Research Highlight AI;
+8. create a new highlight and verify the same output schema.
 
-1. ignore non-highlight annotations;
-2. skip any annotation already tagged `ai:done`;
-3. read the highlight text and relevant item context;
-4. call the configured Groq chat-completions endpoint;
-5. request structured output using a strict JSON schema;
-6. preserve any existing manual comment or translation;
-7. append an `[AI]` block;
-8. replace stale AI Role / Topic / Use tags;
-9. add the current AI tags;
-10. save with `await item.saveTx()`.
-
-Validated defaults:
+## Settings
 
 ```text
 Provider: Groq
+API Key: user supplied
 Model: qwen/qwen3.8-27b
-reasoning_effort: none
+Auto annotate new highlights: on/off
 ```
 
-The output schema is documented in `../docs/data-contract.md`.
+The API key is stored locally in Zotero preferences. If the preference is empty, `GROQ_API_KEY` is accepted as a migration fallback. No API key is included in this repository.
 
-Canonical comment example:
+## Data contract
+
+Canonical comment:
 
 ```text
 [AI]
@@ -71,131 +73,28 @@ ai:topic:tumor-microenvironment
 ai:use:discussion
 ```
 
-## Batch Annotate Existing Highlights
+See `../docs/data-contract.md` for compatibility rules.
 
-The native plugin should retain the already validated batch workflow.
+## Menus
 
-Expected behavior:
+Tools menu:
 
-- accepts a selected regular item, attachment, or annotation;
-- collects highlight annotations beneath the selection;
-- skips `ai:done`;
-- processes requests sequentially;
-- uses `DELAY_MS = 1500` between requests;
-- uses `MAX_RETRIES = 3`;
-- retries HTTP 429 and 5xx responses with 5 s / 10 s / 20 s backoff;
-- preserves existing manual comments or translations;
-- replaces stale AI Role / Topic / Use tags with the current result;
-- saves each annotation;
-- reports final processed / skipped / failed statistics.
+- Batch AI Annotate Highlights
+- Consolidate AI Topics
 
-The plugin should favor predictable, low-rate sequential processing over aggressive concurrency.
+The library item context menu also exposes Batch AI Annotate Highlights.
 
-## Consolidate AI Topics
+## Build
 
-**Consolidate AI Topics** is a manually invoked maintenance command. It should never run automatically when a highlight is created.
+```bash
+npm run check
+npm run build
+```
 
-Its purpose is to merge low-value duplicate or synonymous Topic labels when doing so improves future research retrieval.
-
-The decision criterion is not strict biological identity. It is whether keeping two Topics separate provides meaningful future search value.
-
-Acceptable examples:
+The build script uses only Python's standard library and writes:
 
 ```text
-Soluble-TNF → TNF-alpha
-PD1 + PDL1 → PD-1/PD-L1
-TNF-alpha + TNFR1 + TNFR2 → TNF/TNFR-signaling
+dist/research-highlight-ai-0.1.0.xpi
 ```
 
-Do not merge independently useful retrieval axes such as:
-
-```text
-CXCL10
-CXCR3
-```
-
-Avoid broad umbrella labels such as `immune-signaling` or `tumor-biology`.
-
-### Topic discovery implementation
-
-The validated implementation reads annotations first and then uses the Zotero Item API to inspect tags:
-
-```js
-const annotationIDs =
-    await Zotero.DB.columnQueryAsync(
-        `
-        SELECT ia.itemID
-        FROM itemAnnotations ia
-        LEFT JOIN deletedItems di
-            ON di.itemID = ia.itemID
-        WHERE di.itemID IS NULL
-        `
-    );
-
-const annotations =
-    annotationIDs.length
-        ? await Zotero.Items.getAsync(annotationIDs)
-        : [];
-```
-
-Then each annotation is inspected through:
-
-```js
-annotation.getTags()
-```
-
-Do not replace this with SQL `LIKE` / `substr` matching of `ai:topic:*` text. That approach was unreliable in the validated Actions & Tags environment.
-
-## Settings
-
-Planned settings:
-
-```text
-Provider: Groq
-API Key: user supplied
-Model: qwen/qwen3.8-27b
-Auto annotate new highlights: on/off
-```
-
-No real API key belongs in source control, examples, fixtures, releases, or logs.
-
-The prototype currently reads `GROQ_API_KEY` from the environment. The native plugin may move key storage into Zotero plugin preferences, but it must keep the credential local and out of the repository.
-
-## ZotLit Companion dependency
-
-ZotLit Companion is a prerequisite for the complete Research Highlight Toolkit workflow, but Research Highlight AI should remain loosely coupled to it.
-
-The plugin should not:
-
-- call ZotLit refresh APIs;
-- implement WAL synchronization itself;
-- create a second sync database;
-- use `Zotero.launchURL` to force synchronization.
-
-Its job ends when the Zotero annotation has been saved correctly.
-
-## Non-goals
-
-This plugin is not intended to:
-
-- replace ZotLit Companion;
-- provide an Obsidian UI;
-- maintain its own highlight cache;
-- automatically collapse every biologically related topic into one vocabulary term;
-- rewrite the proven prompts and workflow before feature parity is established.
-
-## Migration strategy
-
-The first Zotero-plugin milestone should be behavioral parity with the validated Actions & Tags workflow rather than architectural novelty.
-
-Recommended sequence:
-
-1. implement settings and provider client;
-2. implement annotation parsing / writing helpers;
-3. implement auto-annotation of new highlights;
-4. implement Batch Annotate Existing Highlights;
-5. implement Consolidate AI Topics;
-6. verify comment preservation and exact `ai:*` compatibility;
-7. package and test on a clean Zotero installation.
-
-Development of this plugin is intentionally scheduled after the Obsidian Dashboard migration because the Dashboard prototype is currently the lower-risk packaging target.
+For Zotero 10, install the XPI from **Tools → Plugins**.
