@@ -185,7 +185,8 @@ role 表示它是什么类型的知识, use 表示未来最可能怎么使用.`;
     return result;
   },
 
-  async annotateItem(item) {
+  async annotateItem(item, options = {}) {
+    const force = Boolean(options.force);
     if (!item?.isAnnotation?.()) return { status: "skip-not-annotation" };
 
     const annotationType = item.annotationType;
@@ -195,7 +196,7 @@ role 表示它是什么类型的知识, use 表示未来最可能怎么使用.`;
 
     const text = String(item.annotationText || "").trim();
     if (!text) return { status: "skip-empty" };
-    if (this.hasTag(item, "ai:done")) return { status: "skip-done" };
+    if (!force && this.hasTag(item, "ai:done")) return { status: "skip-done" };
 
     const context = await this.getAnnotationContext(item);
     const result = await this.callGroqForAnnotation(context);
