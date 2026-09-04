@@ -162,7 +162,7 @@ The next phase is focused on packaging, provider validation, safer vocabulary ma
 ## Repository
 
 ```text
-research-highlight-toolkit/
+research-highlight/
 ├─ assets/brand/
 ├─ zotero-plugin/
 ├─ obsidian-plugin/
