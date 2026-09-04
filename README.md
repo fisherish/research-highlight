@@ -169,9 +169,13 @@ research-highlight-toolkit/
 │  ├─ architecture.md
 │  ├─ data-contract.md
 │  └─ installation.md
-└─ README.md
+├─ LICENSE
+├─ README.md
+└─ README.zh-CN.md
 ```
 
 ## License
 
-A distribution license has not yet been selected. Until a license is added, the repository should not be described as open source.
+Research Highlight is licensed under the [Apache License 2.0](LICENSE).
+
+The license permits use, modification, distribution, and commercial use, while preserving attribution and providing an explicit patent grant.
