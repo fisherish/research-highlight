@@ -13,11 +13,12 @@ async function startup({ id, version, rootURI }) {
   await Zotero.initializationPromise;
   await Zotero.unlockPromise;
   await Zotero.uiReadyPromise;
-  for (const script of ["core.js", "annotation.js", "batch.js", "topics.js"]) {
+  for (const script of ["core.js", "annotation.js", "reader.js", "batch.js", "topics.js"]) {
     Services.scriptloader.loadSubScript(rootURI + "src/" + script);
   }
   ResearchHighlightAI.init({ id, version, rootURI });
   await ResearchHighlightAI.startup();
+  ResearchHighlightAI.registerReaderContextMenu();
 }
 
 function onMainWindowLoad({ window }) {
@@ -31,6 +32,7 @@ function onMainWindowUnload({ window }) {
 async function shutdown(data, reason) {
   if (reason === APP_SHUTDOWN) return;
   log("Shutting down");
+  ResearchHighlightAI?.unregisterReaderContextMenu();
   await ResearchHighlightAI?.shutdown();
   ResearchHighlightAI = undefined;
 }
