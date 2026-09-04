@@ -96,7 +96,9 @@ Rules:
    - Examples: mechanism, result, limitation, background, method, hypothesis, evidence, comparison.
 
 3. topics:
-   - 1–5 retrieval-oriented scientific topics.
+   - 1–3 retrieval-oriented scientific topics.
+   - Use the smallest sufficient number of topics; usually 1–2.
+   - Use 3 only when the highlight contains three clearly independent retrieval axes.
    - Prefer concepts useful as future search/filter keys.
    - Avoid generic labels such as "tumor-biology" or "immune-signaling".
    - Keep independently useful ligand/receptor concepts separate when they serve different retrieval purposes.
@@ -142,7 +144,7 @@ ${context.highlight}
                 topics: {
                   type: "array",
                   minItems: 1,
-                  maxItems: 5,
+                  maxItems: 3,
                   items: { type: "string" },
                 },
                 use: { type: "string" },
