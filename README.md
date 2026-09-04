@@ -104,15 +104,19 @@ Dataview is not required.
 
 See [`obsidian-plugin/README.md`](obsidian-plugin/README.md).
 
-## Product direction
+## Next
 
-Research Highlight is being developed as a coherent research product, not as a collection of personal scripts.
+The next phase focuses on:
 
-The current priority is product quality: reliable annotation, low-friction setup, provider flexibility, consistent behavior across Zotero and Obsidian, safer vocabulary management, and strong retrieval of accumulated research highlights.
+- improving installation and first-run setup;
+- validating and refining Groq, OpenAI, OpenRouter, and Custom providers;
+- improving reliability and error handling across Auto, single-highlight, and Batch annotation;
+- adding a safer preview and confirmation flow for Topic Consolidation;
+- aligning icons, copy, and interaction details across Zotero and Obsidian;
+- preparing a cleaner public distribution and update path for the Obsidian plugin;
+- improving cross-paper highlight retrieval and exploring semantic retrieval, saved research views, cross-highlight synthesis, and collaborative research workflows.
 
-Longer-term directions may include semantic retrieval, richer research views, synthesis across selected highlights, or collaborative workflows. Commercialization is only a possible future direction and is not part of the current product positioning.
-
-Current product principles and roadmap are documented in [`docs/product.md`](docs/product.md) and [`docs/roadmap.md`](docs/roadmap.md).
+See [`docs/roadmap.md`](docs/roadmap.md) for the detailed roadmap.
 
 ## Brand
 
