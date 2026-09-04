@@ -4,46 +4,24 @@
 
 # Research Highlight AI
 
-**The capture and enrichment layer for Research Highlight.**
-
-Research Highlight AI turns Zotero highlights into structured research objects that are easier to recover and reuse across papers. It adds concise summaries plus Role, Topics, and Use metadata while preserving Zotero as the source of truth.
+Research Highlight AI is the Zotero side of Research Highlight. It takes the highlights you already make while reading and adds a short summary plus Role, Topics, and Use metadata.
 
 > **Status:** public beta. Current build: **v0.2.2**.
 
-## Product role
+## What it does
 
-Research Highlight AI is the Zotero client of the broader **Research Highlight** product.
+Typical use is straightforward:
 
-```text
-Highlight in Zotero
-    ↓
-Research Highlight AI
-    ↓
-summary + role + topics + use
-    ↓
-Zotero annotation comment + ai:* tags
-    ↓
-ZotLit transport
-    ↓
-Research Highlight Dashboard
-```
+1. Highlight text in the Zotero Reader.
+2. Let Auto annotate it, or right-click the highlight and run AI annotation manually.
+3. The plugin writes an `[AI]` block into the annotation comment and adds `ai:*` tags.
+4. ZotLit can then carry the updated annotation into Obsidian for searching and review.
 
-The plugin does not create a parallel highlight database and does not call ZotLit refresh APIs.
+Existing manual comments and translations are kept.
 
-## Core experience
+## Output format
 
-Research Highlight AI is designed to stay close to normal reading behavior:
-
-- create a highlight and let Auto annotate process it;
-- right-click a highlight for single-item AI annotation or re-annotation;
-- batch-process a selected paper, attachment, or annotation set;
-- consolidate near-duplicate Topics when the vocabulary grows.
-
-Existing manual comments and translations are preserved.
-
-## Structured research metadata
-
-Canonical comment:
+Comment:
 
 ```text
 [AI]
@@ -54,7 +32,7 @@ Topics: CAR-T cells, solid tumors, tumor microenvironment
 Use: discussion
 ```
 
-Canonical tags:
+Tags:
 
 ```text
 ai:done
@@ -65,11 +43,20 @@ ai:topic:tumor-microenvironment
 ai:use:discussion
 ```
 
-This contract is intentionally human-readable and portable.
+## Current features
+
+- automatic annotation for newly created text highlights;
+- Reader context-menu annotation and re-annotation;
+- Reader context-menu switch for Auto annotate;
+- batch annotation for papers, attachments, or annotations;
+- preservation of existing manual comments and translations;
+- structured JSON output validation;
+- Topic Consolidator for duplicate or near-duplicate Topics;
+- sequential batch processing with retry/backoff;
+- editable provider, endpoint, API key, and model settings;
+- GitHub Release based automatic updates.
 
 ## Model providers
-
-Research Highlight AI is provider-flexible rather than tied to a single model vendor.
 
 Current templates:
 
@@ -91,49 +78,15 @@ Custom OpenAI-compatible
   Model: user supplied
 ```
 
-Endpoint and Model remain editable. Custom endpoints can be used for compatible gateways or local services. The plugin intentionally does not ship an Anthropic preset.
+Endpoint and Model are editable. Custom can point to another compatible gateway or a local service. API keys are stored in Zotero preferences and are not included in the repository.
 
-API credentials are stored locally in Zotero preferences and are never included in this repository.
-
-## Current capabilities
-
-- automatic annotation of newly created text highlights;
-- Reader context-menu annotation and re-annotation;
-- Reader context-menu switch for Auto annotate;
-- Batch AI Annotate for regular items, attachments, or annotations;
-- structured JSON output validation;
-- preservation of manual comments and translations;
-- retrieval-oriented Topic Consolidator;
-- sequential batch processing with retry/backoff;
-- editable provider, endpoint, API key, and model settings;
-- shared Research Highlight product icon packaged in the XPI;
-- GitHub Release based automatic updates.
-
-The original Groq path has been validated end-to-end in the real Zotero → ZotLit → Obsidian workflow. Additional provider templates are beta paths until individually validated with production credentials.
-
-## Annotation behavior
-
-Auto, Batch, and Reader single-highlight annotation share the same production annotation logic and data contract.
-
-The current production annotation prompt is treated as compatibility-sensitive behavior. Refactoring should not silently rewrite it or add extra paper context such as the abstract.
+The Groq path has been tested end to end. The other provider templates are already supported and will continue to be checked with real credentials.
 
 ## Topic Consolidator
 
-The Topic Consolidator is designed to reduce vocabulary fragmentation without flattening scientifically useful distinctions.
+Topic Consolidator is used when the Topic list starts to fragment into multiple names for nearly the same thing.
 
-It can consolidate near-duplicate naming variants while preserving meaningful differences between molecules, cell states, models, mechanisms, readouts, diseases, therapies, and engineered constructs.
-
-## Shared brand
-
-Research Highlight AI uses the same product identity as Research Highlight Dashboard for Obsidian.
-
-Canonical brand asset:
-
-`../assets/brand/research-highlight-icon.svg`
-
-The same vector mark is also packaged as `zotero-plugin/icon.svg`.
-
-Brand guidance: [`../docs/brand.md`](../docs/brand.md).
+It is intentionally conservative about merging scientifically different concepts. The next improvement is to add a preview and confirmation step before changes are applied.
 
 ## Menus
 
@@ -152,8 +105,6 @@ Zotero Reader annotation context menu:
 - 重新 AI 标注此高亮
 - 开启 / 关闭自动标注新建高亮
 
-Reader actions run without blocking success popups.
-
 ## Build and distribution
 
 ```bash
@@ -161,12 +112,12 @@ npm run check
 npm run build
 ```
 
-The GitHub Actions release pipeline builds the XPI, creates a tagged GitHub Release, updates `updates.json`, and feeds Zotero's automatic update channel.
+The GitHub Actions workflow builds the XPI, creates a GitHub Release, updates `updates.json`, and feeds Zotero's automatic update channel.
 
 For Zotero 10, install the XPI from **Tools → Plugins**.
 
 ## Next
 
-Current work focuses on provider validation, annotation reliability, safer Topic Consolidation, setup quality, and tighter integration with the Obsidian Dashboard.
+Current work is focused on provider testing, annotation reliability, safer Topic Consolidation, and setup quality.
 
-See [`../docs/roadmap.md`](../docs/roadmap.md) for the broader roadmap.
+See [`../docs/roadmap.md`](../docs/roadmap.md).
