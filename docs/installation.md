@@ -1,10 +1,6 @@
 # Installation
 
-> **Status:** early development. Research Highlight AI and Research Highlight Dashboard are not yet packaged as installable releases. This document describes the intended final installation and the currently validated dependency stack.
-
-## Final installation model
-
-The finished workflow is designed to require only these four plugins:
+Research Highlight uses two plugins on the Zotero side and two on the Obsidian side:
 
 ```text
 Zotero
@@ -16,110 +12,83 @@ Obsidian
 └─ Research Highlight Dashboard
 ```
 
-ZotLit and ZotLit Companion remain required because this project does not reimplement the Zotero-to-Obsidian synchronization layer.
+## 1. Zotero
 
-## Validated prototype environment
-
-The working prototype has been validated with:
-
-- Zotero 10
-- Actions & Tags 2.6.1 for the current pre-plugin AI automation
-- ZotLit Companion installed on the Zotero side
-- Obsidian 1.13.7
-- ZotLit v2.1.1
-- DataviewJS only as the current Dashboard prototype host
-
-Dataview and Actions & Tags are development/prototype dependencies, not intended final dependencies after the two custom plugins are packaged.
-
-## Target Zotero setup
-
-### 1. Install ZotLit Companion
+### Install ZotLit Companion
 
 Install and enable ZotLit Companion in Zotero.
 
-The validated configuration uses ZotLit Companion to:
+### Install Research Highlight AI
 
-- detect the Zotero database automatically;
-- read in immutable mode;
-- watch for database changes;
-- checkpoint the Zotero WAL when required by the existing ZotLit workflow.
-
-Do not add custom refresh scripts to Research Highlight AI.
-
-### 2. Install Research Highlight AI
-
-Once packaged, install the Research Highlight AI Zotero plugin.
-
-Configure:
+Open the [Research Highlight Releases](https://github.com/fisherish/research-highlight/releases) page and download the latest file named:
 
 ```text
-Provider: Groq
-API Key: <your own key>
-Model: qwen/qwen3.8-27b
-Auto annotate new highlights: on/off
+research-highlight-ai-v*.xpi
 ```
 
-No real API key should ever be committed to this repository or bundled into a release.
+In Zotero, open **Tools → Plugins**, then install the XPI.
 
-The plugin should expose:
+### First setup
 
-- automatic annotation of new highlights;
-- **Batch Annotate Existing Highlights**;
-- **Consolidate AI Topics**;
-- settings for provider, API key, model, and auto-annotation.
+Open **Zotero Settings → Research Highlight AI**.
 
-## Target Obsidian setup
+For the normal setup you only need to do three things:
 
-### 1. Install ZotLit
+1. Choose a provider: Groq, OpenAI, or OpenRouter.
+2. Paste your API key.
+3. Click **Test connection**.
 
-Install and enable ZotLit in Obsidian and ensure it is connected to ZotLit Companion.
+Endpoint and Model are filled automatically. You normally do not need to open **Advanced settings**.
 
-Research Highlight Dashboard consumes ZotLit's live database directly.
+When the test succeeds, enable **Auto annotate new highlights** if you want new highlights to be processed automatically.
 
-### 2. Install Research Highlight Dashboard
+For a custom OpenAI-compatible endpoint, choose **Custom** and fill Endpoint and Model under **Advanced settings**.
 
-Once packaged, install and enable Research Highlight Dashboard.
+## 2. Obsidian
 
-The plugin should add a left-ribbon action named **Research Highlights**. Clicking it opens the Dashboard `ItemView`.
+### Install ZotLit
 
-If ZotLit is missing or disabled, the view should display:
+Install and enable ZotLit in Obsidian.
+
+### Install Research Highlight Dashboard
+
+Open the [Research Highlight Releases](https://github.com/fisherish/research-highlight/releases) page and download the latest file named:
 
 ```text
-Research Highlight Dashboard requires ZotLit.
-Install or enable ZotLit, then reopen this view.
+research-highlight-dashboard-v*.zip
 ```
 
-It should not throw an unhandled JavaScript error.
+Extract it into your vault's plugin folder:
 
-## Expected end-to-end behavior
+```text
+<your-vault>/.obsidian/plugins/
+```
 
-A clean installation should satisfy the following checks:
+After extraction, the folder should look like this:
 
-1. Create a Zotero highlight.
-2. Research Highlight AI annotates it when auto-annotation is enabled.
-3. The annotation comment retains any existing manual content and gains an `[AI]` block.
-4. The annotation receives `ai:done`, `ai:role:*`, `ai:topic:*`, and `ai:use:*` tags.
-5. ZotLit Companion / ZotLit propagate the updated annotation state.
-6. Research Highlight Dashboard displays the highlight without manual refresh.
-7. Editing the AI summary or structured tags in Zotero updates the Dashboard.
-8. Deleting the Zotero highlight removes it from the Dashboard.
-9. **Open in Zotero** resolves back to the original annotation using the Zotero deep link.
+```text
+.obsidian/plugins/research-highlight-dashboard/
+├─ main.js
+├─ manifest.json
+└─ styles.css
+```
 
-## What should not be installed or configured
+Then open **Obsidian Settings → Community plugins**, enable **Research Highlight Dashboard**, and click **Research Highlights** in the left ribbon.
 
-The production workflow should not require:
+## 3. Check that it works
 
-- Dataview;
-- a custom `highlights.json` file;
-- a project-specific SQLite database;
-- custom ZotLit refresh code in Research Highlight AI;
-- `Zotero.launchURL` as a synchronization mechanism.
+Create a new highlight in Zotero.
 
-## Current development workflow
+If automatic annotation is enabled, the highlight should receive an AI summary plus Role, Topics, and Use metadata. After ZotLit syncs the change, the same highlight should appear in Research Highlight Dashboard.
 
-Until packaged releases exist, continue using the already validated prototypes:
+That is the whole setup.
 
-- Zotero: Actions & Tags implementation of auto annotation, batch annotation, and topic consolidation;
-- Obsidian: the selected Final v6 DataviewJS Dashboard prototype.
+## Provider notes
 
-The first packaging milestone is to migrate the Final v6 Dashboard into a native Obsidian `ItemView` while preserving its behavior and ZotLit live-database access.
+Groq, OpenAI, and OpenRouter come with a default Endpoint and Model. You can change them later if needed.
+
+API keys are stored in local Zotero preferences. Custom endpoints may leave the API key empty when authentication is not required.
+
+## Requirements
+
+The currently validated setup uses Zotero 10, Obsidian 1.13+, ZotLit Companion, and ZotLit.
