@@ -4,56 +4,50 @@
 
 # Research Highlight Dashboard
 
-**The retrieval and review surface for Research Highlight.**
-
-Research Highlight Dashboard turns structured Zotero annotations into a searchable research workspace inside Obsidian. It is designed for recovering evidence, mechanisms, methods, limitations, and ideas across papers rather than browsing notes one document at a time.
+Research Highlight Dashboard is the Obsidian side of Research Highlight. It lets you search and review Zotero highlights that have already been annotated and carried into Obsidian through ZotLit.
 
 > **Status:** public beta. Current validated build: **v0.1.3**.
 
-## Product role
-
-Research Highlight Dashboard is the Obsidian client of the broader **Research Highlight** product.
+## How it fits into the workflow
 
 ```text
 Zotero highlight
     ↓
 Research Highlight AI
     ↓
-structured Zotero annotation metadata
+comment + ai:* tags
     ↓
 ZotLit
     ↓
 Research Highlight Dashboard
 ```
 
-Zotero remains the source of truth. ZotLit is the current live data layer. Dataview is not required.
+Zotero keeps the original annotation. The Dashboard reads the ZotLit data and gives you a faster way to browse highlights across papers.
 
 ## Reader and Sticky
 
-**Reader** is optimized for focused review of individual highlights with a clear AI-summary-first hierarchy and direct return links to Zotero.
+**Reader** is for going through highlights one by one. It keeps the paper title, Topics, AI summary, original text, and Zotero link together.
 
-**Sticky** is optimized for scanning a larger evidence set as a compact research board with responsive multi-column layout.
+**Sticky** lays out more highlights at once, which is useful when you want to scan material around a topic without opening each paper separately.
 
-Both views share Search, Role, Use, Topic, Sort, and direction controls.
+Both views use the same search, filter, and sort controls.
 
-## Current capabilities
+## Current features
 
 - native Obsidian `ItemView`;
-- Research Highlights ribbon and command-palette entry;
-- direct ZotLit live database reads;
-- live refresh on ZotLit changes;
+- Research Highlights ribbon button and command-palette entry;
+- direct ZotLit database reads;
+- automatic refresh when ZotLit data changes;
 - Reader and Sticky views;
-- Search, Role, Use, and Topic filtering;
+- text search;
+- Role, Use, and Topic filters;
 - sorting and ascending / descending direction;
 - Zotero annotation deep links;
-- persisted view and appearance state;
+- saved view and appearance settings;
 - Auto, Eye, and Dark appearance modes;
-- responsive Sticky columns;
-- no Dataview dependency.
+- responsive Sticky columns.
 
-## Product design
-
-The Dashboard is intentionally evidence-centric. The visual hierarchy prioritizes:
+## What is shown for each highlight
 
 ```text
 Role / Use
@@ -64,30 +58,18 @@ Original highlight
 Open in Zotero
 ```
 
-This keeps the interface useful for literature synthesis rather than turning it into a generic card browser.
+The goal is to keep the information needed for review in one place and make it easy to return to the original passage when necessary.
 
-## Shared brand
-
-Research Highlight Dashboard uses the same product identity as Research Highlight AI for Zotero.
-
-Canonical brand asset:
-
-`../assets/brand/research-highlight-icon.svg`
-
-Brand guidance: [`../docs/brand.md`](../docs/brand.md).
-
-## Dependency
-
-Required:
+## Requirements
 
 - Obsidian 1.13+
 - ZotLit
 
-On the Zotero side, the complete workflow also uses ZotLit Companion and Research Highlight AI.
+For the complete workflow on the Zotero side, ZotLit Companion and Research Highlight AI are also used.
 
-## Distribution direction
+## Distribution
 
-The current build is a native Obsidian plugin. A stable public distribution channel is part of the productization roadmap so Zotero and Obsidian can share a consistent install, update, and brand experience.
+The current build already runs as a native Obsidian plugin. The next step is to finish a cleaner public release and update flow.
 
 ## Development files
 
