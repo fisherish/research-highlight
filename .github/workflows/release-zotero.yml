@@ -1,0 +1,137 @@
+name: Release Zotero Plugin
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - zotero-plugin/manifest.json
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read plugin version
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(python - <<'PY'
+          import json
+          with open('zotero-plugin/manifest.json', encoding='utf-8') as f:
+              print(json.load(f)['version'])
+          PY
+          )
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=zotero-ai-v$VERSION" >> "$GITHUB_OUTPUT"
+          echo "asset=research-highlight-ai-v$VERSION.xpi" >> "$GITHUB_OUTPUT"
+
+      - name: Check whether release already exists
+        id: existing
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        shell: bash
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate JavaScript and metadata
+        if: steps.existing.outputs.exists != 'true'
+        shell: bash
+        run: |
+          cd zotero-plugin
+          node --check bootstrap.js
+          node --check src/core.js
+          node --check src/annotation.js
+          node --check src/batch.js
+          node --check src/topics.js
+          python -m json.tool manifest.json >/dev/null
+          python -m json.tool package.json >/dev/null
+
+      - name: Build XPI
+        if: steps.existing.outputs.exists != 'true'
+        shell: bash
+        run: |
+          cd zotero-plugin
+          python scripts/build_xpi.py
+          VERSION='${{ steps.version.outputs.version }}'
+          mv "dist/research-highlight-ai-${VERSION}.xpi" "dist/research-highlight-ai-v${VERSION}.xpi"
+
+      - name: Create GitHub Release
+        if: steps.existing.outputs.exists != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+          TAG: ${{ steps.version.outputs.tag }}
+          ASSET: ${{ steps.version.outputs.asset }}
+        shell: bash
+        run: |
+          gh release create "$TAG" \
+            "zotero-plugin/dist/$ASSET" \
+            --target "$GITHUB_SHA" \
+            --title "Research Highlight AI v$VERSION" \
+            --notes "Automated Research Highlight AI release v$VERSION."
+
+      - name: Update Zotero update manifest
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          TAG: ${{ steps.version.outputs.tag }}
+          ASSET: ${{ steps.version.outputs.asset }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          version = os.environ['VERSION']
+          tag = os.environ['TAG']
+          asset = os.environ['ASSET']
+          data = {
+              'addons': {
+                  'research-highlight-ai@fisherish.github.io': {
+                      'updates': [
+                          {
+                              'version': version,
+                              'update_link': f'https://github.com/fisherish/research-highlight-toolkit/releases/download/{tag}/{asset}',
+                              'applications': {
+                                  'zotero': {
+                                      'strict_min_version': '10.0',
+                                      'strict_max_version': '10.0.*',
+                                  }
+                              },
+                          }
+                      ]
+                  }
+              }
+          }
+          Path('zotero-plugin/updates.json').write_text(
+              json.dumps(data, indent=2, ensure_ascii=False) + '\n',
+              encoding='utf-8',
+          )
+          PY
+
+      - name: Commit update metadata
+        shell: bash
+        run: |
+          if git diff --quiet -- zotero-plugin/updates.json; then
+            echo "updates.json already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add zotero-plugin/updates.json
+          git commit -m "Update Zotero auto-update metadata for v${{ steps.version.outputs.version }} [skip ci]"
+          git push
