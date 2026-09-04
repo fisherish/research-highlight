@@ -1,7 +1,7 @@
 {
   "id": "research-highlight-dashboard",
   "name": "Research Highlight Dashboard",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "minAppVersion": "1.13.0",
   "description": "Browse AI-annotated Zotero highlights from ZotLit's live database in Reader and Sticky views.",
   "author": "fisherish",

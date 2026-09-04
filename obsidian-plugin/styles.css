@@ -1,6 +1,11 @@
 .research-highlight-dashboard-view {
   overflow: auto;
-  padding: 16px;
+  padding: 0 16px 16px;
+}
+
+/* Obsidian themes can set .view-content padding with higher specificity. */
+.view-content.research-highlight-dashboard-view {
+  padding-top: 0 !important;
 }
 
 .rh-app {
@@ -68,11 +73,18 @@ body.theme-dark .rh-app.rh-appearance-eye,
 .rh-status h3 { margin: 0 0 8px; }
 .rh-status p { margin: 0; color: var(--text-muted); }
 
-.rh-header {
+.rh-header-shell {
   position: sticky;
   top: 0;
   z-index: 30;
-  margin-bottom: 14px;
+  padding-bottom: 14px;
+  background: var(--background-primary);
+}
+
+.rh-header {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 0;
   padding: 11px;
   border: 1px solid var(--rh-border);
   border-radius: 18px;
@@ -311,7 +323,7 @@ body.theme-dark .rh-app.rh-appearance-eye,
 .rh-mode-sticky .rh-sort-select { min-height: 29px; font-size: .75em; }
 
 @media (max-width: 720px) {
-  .research-highlight-dashboard-view { padding: 10px; }
+  .research-highlight-dashboard-view { padding: 0 10px 10px; }
   .rh-header-top { flex-direction: column; align-items: stretch; }
   .rh-search { min-width: 0; }
   .rh-view-switch { width: 100%; }

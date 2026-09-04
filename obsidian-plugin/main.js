@@ -114,6 +114,7 @@ async function mountDashboard(root, app) {
   let statsEl = null;
   let liveTimer = null;
   let resizeTimer = null;
+  let stickyBreakpoint = null;
 
   function applyAppearance() {
     appRoot.classList.remove("rh-appearance-eye", "rh-appearance-dark");
@@ -312,7 +313,9 @@ async function mountDashboard(root, app) {
 
   function renderSticky(list) {
     const grid = resultsEl.createDiv({ cls: "sn-grid" });
-    const columnCount = Math.min(stickyColumnCount(), Math.max(1, list.length));
+    const breakpoint = stickyColumnCount();
+    stickyBreakpoint = breakpoint;
+    const columnCount = Math.min(breakpoint, Math.max(1, list.length));
     grid.style.setProperty("--sn-columns", String(columnCount));
     const columns = Array.from({ length: columnCount }, () => grid.createDiv({ cls: "sn-column" }));
 
@@ -374,8 +377,12 @@ async function mountDashboard(root, app) {
       resultsEl.createDiv({ text: "No highlights match the current filters.", cls: "rh-empty" });
       return;
     }
-    if (state.view === "reader") renderReader(list);
-    else renderSticky(list);
+    if (state.view === "reader") {
+      stickyBreakpoint = null;
+      renderReader(list);
+    } else {
+      renderSticky(list);
+    }
   }
 
   function rebuild({ preserveFilters = true } = {}) {
@@ -395,7 +402,8 @@ async function mountDashboard(root, app) {
     if (state.use && !uses.includes(state.use)) state.use = "";
     if (state.topic && !topics.includes(state.topic)) state.topic = "";
 
-    const header = appRoot.createDiv({ cls: "rh-header" });
+    const headerShell = appRoot.createDiv({ cls: "rh-header-shell" });
+    const header = headerShell.createDiv({ cls: "rh-header" });
     const top = header.createDiv({ cls: "rh-header-top" });
     const search = top.createEl("input", { cls: "rh-search" });
     search.type = "search";
@@ -488,13 +496,15 @@ async function mountDashboard(root, app) {
 
   const resizeObserver = new ResizeObserver(() => {
     if (state.view !== "sticky") return;
+    const nextBreakpoint = stickyColumnCount();
+    if (nextBreakpoint === stickyBreakpoint) return;
     if (resizeTimer) clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
       resizeTimer = null;
-      renderResults();
+      if (stickyColumnCount() !== stickyBreakpoint) renderResults();
     }, 120);
   });
-  resizeObserver.observe(appRoot);
+  resizeObserver.observe(root);
 
   return () => {
     try { unsubscribe?.(); } catch (_) {}
@@ -517,6 +527,9 @@ class ResearchHighlightsView extends ItemView {
   async onOpen() {
     this.cleanupDashboard?.();
     this.contentEl.addClass("research-highlight-dashboard-view");
+    // Obsidian themes may apply higher-specificity padding to .view-content.
+    // Force this ItemView flush to the top so sticky controls cannot leave a leak strip.
+    this.contentEl.style.setProperty("padding-top", "0", "important");
     try {
       this.cleanupDashboard = await mountDashboard(this.contentEl, this.app);
     } catch (error) {
@@ -529,6 +542,7 @@ class ResearchHighlightsView extends ItemView {
     this.cleanupDashboard?.();
     this.cleanupDashboard = null;
     this.contentEl.removeClass("research-highlight-dashboard-view");
+    this.contentEl.style.removeProperty("padding-top");
     this.contentEl.empty();
   }
 }
