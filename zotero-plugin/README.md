@@ -2,7 +2,7 @@
 
 Native Zotero 10 plugin that packages the validated Actions & Tags workflow into an installable plugin.
 
-> Status: early development. Current test build: **v0.1.3**. Manual Batch AI Annotate has been validated end-to-end in the real Zotero 10 + ZotLit + Obsidian environment. Auto annotation is being re-tested after the v0.1.3 preference fix.
+> Status: early development. Current test build: **v0.1.3**. Manual Batch AI Annotate, automatic annotation of newly created highlights, ZotLit/Dashboard propagation, and GitHub Release based automatic updates have all been validated in the real Zotero 10 environment.
 
 ## Current v0.1.3 scope
 
@@ -18,15 +18,18 @@ Native Zotero 10 plugin that packages the validated Actions & Tags workflow into
 - canonical `[AI]` comment and `ai:*` tag contract
 - preservation of existing manual / translation comments
 - Zotero Item API topic discovery via `annotation.getTags()`
+- GitHub Actions release automation and Zotero automatic updates through `updates.json`
 
 Zotero remains the source of truth. This plugin does not call ZotLit refresh APIs and does not create a separate database.
 
 ## Validated integration status
 
-The following manual Batch path has been tested successfully in the real environment:
+The following paths have been tested successfully in the real environment:
 
 ```text
-Research Highlight AI
+New Zotero highlight
+    ↓
+Research Highlight AI automatic annotation
     ↓
 Zotero annotation comment + ai:* tags
     ↓
@@ -37,14 +40,30 @@ ZotLit live database
 Research Highlight Dashboard
 ```
 
+and:
+
+```text
+GitHub version bump
+    ↓
+GitHub Actions build/release
+    ↓
+updates.json
+    ↓
+Zotero update discovery
+    ↓
+plugin update installation
+```
+
 Validated behavior:
 
-- Groq request succeeds;
+- manual Batch AI Annotate succeeds;
+- automatic annotation of newly created highlights succeeds;
 - Chinese summary is generated normally;
 - existing manual comment / translation content is preserved;
 - `ai:done`, `ai:role:*`, `ai:topic:*`, and `ai:use:*` remain compatible with the original schema;
 - ZotLit transports the saved changes without custom refresh logic;
-- Research Highlight Dashboard updates automatically from the live DB.
+- Research Highlight Dashboard updates automatically from the live DB;
+- Zotero can discover and install a newer plugin build from the public GitHub release channel.
 
 ## v0.1.3 auto-annotation fix
 
@@ -64,7 +83,7 @@ This applies to Auto annotate, API Key, and Model preference reads. The environm
 
 ## Frozen canonical prompts
 
-The AI annotation prompt and Topic Consolidator prompt have now been restored from the user's optimized production prompts and are treated as frozen compatibility behavior.
+The AI annotation prompt and Topic Consolidator prompt have been restored from the user's optimized production prompts and are treated as frozen compatibility behavior.
 
 Do not rewrite, shorten, expand, translate, or otherwise optimize these prompts during refactoring. In particular:
 
@@ -85,19 +104,18 @@ The v0.1.0 and v0.1.1 XPIs were rejected before plugin startup because `applicat
 
 Keep it off while the old Actions & Tags `Create Annotation` action is still active. Otherwise both automations may start an API request for the same newly created highlight before either one has written `ai:done`.
 
-Recommended migration test:
+Recommended migration sequence:
 
 1. install the plugin;
 2. enter the Groq API key in Zotero Settings → Research Highlight AI;
-3. leave Auto annotate off;
-4. test **Batch AI Annotate Highlights** on one known highlight that does not have `ai:done`;
-5. compare the generated comment and tags with the old Actions & Tags output;
-6. disable the old Actions & Tags auto action;
-7. enable Auto annotate in Research Highlight AI;
-8. close the settings pane and create a new highlight;
-9. verify the same output schema and ZotLit/Dashboard live update.
+3. test manual Batch AI Annotate;
+4. disable the old Actions & Tags auto action;
+5. enable Auto annotate in Research Highlight AI;
+6. verify new highlights are annotated automatically;
+7. verify ZotLit/Dashboard live propagation;
+8. keep using the GitHub release channel for future plugin updates.
 
-Steps 1 through 5 have been validated successfully in the real environment.
+Steps 1 through 8 have now been validated in the real environment.
 
 ## Settings
 
@@ -158,4 +176,4 @@ The build script uses only Python's standard library and writes:
 dist/research-highlight-ai-0.1.3.xpi
 ```
 
-For Zotero 10, install the XPI from **Tools → Plugins**.
+For Zotero 10, install the XPI from **Tools → Plugins**. Future versions can be delivered through the validated GitHub Release based update channel.
