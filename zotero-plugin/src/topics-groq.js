@@ -1,5 +1,5 @@
 Object.assign(ResearchHighlightAI, {
-  TOPIC_CONSOLIDATOR_MAX_TOKENS: 600,
+  TOPIC_CONSOLIDATOR_MAX_TOKENS: 800,
 
   async callTopicConsolidator(topicCounts) {
     const response = await fetch(this.GROQ_ENDPOINT, {
