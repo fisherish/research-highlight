@@ -4,7 +4,7 @@ Research Highlight Toolkit packages a working research-reading workflow into two
 
 The goal is simple: turn Zotero highlights into AI-annotated, searchable research notes while keeping **Zotero as the source of truth** and reusing ZotLit for synchronization.
 
-> **Status:** early development. Research Highlight Dashboard v0.1.3 has been validated in the real Obsidian + ZotLit environment. Research Highlight AI v0.1.0 is now packaged as an installable Zotero 10 test build and is awaiting real Zotero integration testing.
+> **Status:** early development. Research Highlight Dashboard v0.1.3 has been validated in the real Obsidian + ZotLit environment. Research Highlight AI v0.1.2 now installs successfully in Zotero 10, and its manual Batch AI Annotate path has been validated end-to-end through ZotLit into the Dashboard.
 
 ## What problem does this solve?
 
@@ -50,7 +50,7 @@ There is no project-specific `highlights.json`, no custom highlight SQLite datab
 
 ### Research Highlight AI — Zotero plugin
 
-Current v0.1.0 test build includes:
+Current v0.1.2 test build includes:
 
 - automatic annotation of newly created highlight annotations through Zotero Notifier;
 - paper title + abstract + highlighted text as AI context;
@@ -64,6 +64,8 @@ Current v0.1.0 test build includes:
 - settings for API key, model, and automatic annotation.
 
 The development build defaults **Auto annotate new highlights** to off so it can be tested safely while the old Actions & Tags automation is still installed.
+
+Manual Batch annotation has now been validated in the real workflow, including Groq output, comment preservation, exact tag compatibility, ZotLit transport, and automatic Dashboard refresh.
 
 See [`zotero-plugin/README.md`](zotero-plugin/README.md).
 
@@ -163,10 +165,12 @@ research-highlight-toolkit/
 
 1. ✅ Migrate Final v6 Dashboard into a native Obsidian plugin.
 2. ✅ Validate Dashboard behavior in the real ZotLit environment.
-3. ✅ Package the validated Actions & Tags behavior into Research Highlight AI v0.1.0.
-4. **Next:** validate Research Highlight AI inside the real Zotero 10 environment.
-5. After parity is confirmed, clean up packaging and prepare manual-install releases.
-6. Finally validate the four-plugin workflow on a clean installation.
+3. ✅ Package the validated Actions & Tags behavior into Research Highlight AI.
+4. ✅ Validate manual Batch AI Annotate end-to-end in the real Zotero 10 environment.
+5. **Next:** validate automatic annotation of newly created highlights.
+6. Then validate selected-item / attachment batch collection and the manual Topic Consolidator.
+7. After parity is confirmed, clean up packaging and prepare manual-install releases.
+8. Finally validate the four-plugin workflow on a clean installation.
 
 ## Installation
 
