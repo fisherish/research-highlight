@@ -1,10 +1,8 @@
 # Research Highlight Dashboard
 
-Research Highlight Dashboard is the planned native Obsidian plugin for browsing AI-annotated Zotero highlights through ZotLit's live database.
+Research Highlight Dashboard is the native Obsidian viewer for AI-annotated Zotero highlights transported by ZotLit.
 
-It is a packaging of an already mature DataviewJS prototype, not a new synchronization system.
-
-> **Status:** early development. The selected migration baseline is the working **Final v6** Dashboard prototype.
+> Status: **early development, v0.1.0 scaffold implemented.** The native `ItemView` migration is now in the repository, but it still needs an end-to-end test inside the user's real Obsidian + ZotLit environment before it should be treated as a release.
 
 ## Role in the system
 
@@ -20,146 +18,106 @@ Research Highlight Dashboard
 Reader / Sticky
 ```
 
-Zotero remains the source of truth. This plugin is a read-oriented viewer over ZotLit's live data.
+Zotero remains the source of truth. This plugin is a read-oriented viewer over ZotLit's live database. It does not create `highlights.json`, a custom SQLite database, or another synchronization layer.
 
-## Required dependency
+## Dependency
 
-Research Highlight Dashboard requires ZotLit.
+ZotLit is required. Dataview is not required.
 
-At startup, the plugin should check:
+If ZotLit is missing or disabled, the view renders a friendly dependency message instead of throwing an unhandled JavaScript error.
 
-```js
-const zotlit =
-    this.app.plugins.plugins["zotlit"];
-```
+## Current v0.1.0 implementation
 
-If ZotLit is missing or disabled, render this message inside the view:
+The first native migration milestone now includes:
 
-```text
-Research Highlight Dashboard requires ZotLit.
-Install or enable ZotLit, then reopen this view.
-```
+- Obsidian `ItemView` integration;
+- left-ribbon **Research Highlights** action;
+- command palette action: **Open Research Highlights**;
+- graceful ZotLit dependency checks;
+- direct ZotLit live DB access;
+- `.prepare().all()` query materialization;
+- ZotLit `changed` subscription with 500 ms debounce;
+- Reader and Sticky views;
+- Search, Role, Use, and Topic filters;
+- Topic click-to-toggle and second-click-to-clear behavior;
+- automatic scroll after Topic filtering;
+- date / title / Role / Use sorting;
+- ascending / descending direction;
+- `Auto | Eye | Dark` appearance modes;
+- persistence of view, sort, direction, and appearance;
+- Zotero annotation deep links;
+- Sticky round-robin column distribution;
+- responsive 4 / 3 / 2 / 1 column targets;
+- view-lifecycle cleanup for ZotLit listeners, timers, and resize observation.
 
-Do not throw an unhandled JavaScript exception.
+The plugin still reads the same data contract documented in `../docs/data-contract.md`.
 
-Dataview is **not** intended to be a production dependency.
-
-## Obsidian integration
-
-The production plugin should use an Obsidian `ItemView`.
-
-Planned UX:
-
-- left ribbon action: **Research Highlights**;
-- clicking the ribbon opens or reveals the Dashboard view;
-- plugin content renders into `this.containerEl`;
-- view state and appearance preferences persist locally.
-
-The migration should preserve the current behavior rather than redesigning the UI.
-
-## ZotLit live database access
-
-The working prototype obtains ZotLit's database service and waits until it is ready:
-
-```js
-const dbService =
-    zotlit.services?.db;
-
-await dbService.ready;
-```
-
-Records are read directly from the ZotLit client:
-
-```js
-const db = dbService.client;
-
-const rows =
-    db.query
-      .itemAnnotations
-      .findMany({ /* ... */ })
-      .prepare()
-      .all();
-```
-
-The `.prepare().all()` materialization step is required. A previous prototype bug produced:
+## Files
 
 ```text
-TypeError: rows is not iterable
+obsidian-plugin/
+├─ src/
+│  └─ main.js
+├─ main.js
+├─ manifest.json
+├─ styles.css
+├─ package.json
+├─ build.mjs
+├─ versions.json
+└─ README.md
 ```
 
-when the prepared query was not fully materialized.
+`src/main.js` is the editable source. `main.js` is the currently built copy used by Obsidian. The build step is intentionally minimal because this first version has no third-party runtime dependencies:
 
-The plugin should subscribe to ZotLit database changes:
+```bash
+npm run check
+npm run build
+```
+
+## Manual development install
+
+For a local test, create this folder inside a test vault:
+
+```text
+<Vault>/.obsidian/plugins/research-highlight-dashboard/
+```
+
+Copy these files into it:
+
+```text
+main.js
+manifest.json
+styles.css
+```
+
+Then reload Obsidian, enable **Research Highlight Dashboard**, make sure ZotLit is enabled, and click the **Research Highlights** ribbon icon.
+
+Do not perform the first test in an irreplaceable main vault. The Dashboard is designed as read-only, but plugin development should still be validated in a test vault first.
+
+## ZotLit access
+
+The implementation keeps the proven query pattern:
+
+```js
+const rows = dbService.client.query.itemAnnotations
+  .findMany({ /* relationships required by the Dashboard */ })
+  .prepare()
+  .all();
+```
+
+The `.prepare().all()` step is required. The previous prototype error `TypeError: rows is not iterable` came from failing to fully materialize the prepared query.
+
+Live refresh remains:
 
 ```js
 dbService.on("changed", ...)
 ```
 
-and debounce UI rebuilds by approximately 500 ms.
+with a 500 ms debounce before rebuilding the UI.
 
-This live-update behavior is part of the feature contract. The validated workflow already updates correctly when a Zotero highlight is created, deleted, or when its AI summary / Role / Topics / Use metadata changes.
+## Reader
 
-## Core logic to migrate
-
-The mature prototype already contains the core functional units:
-
-- `loadRecords()`
-- `extractAISummary()`
-- `getPaperTitle()`
-- `buildZoteroLink()`
-- `sortRecords()`
-- `renderReader()`
-- `renderSticky()`
-- `toggleTopic()`
-
-The main architectural change is:
-
-```text
-dv.container
-    ↓
-this.containerEl / ItemView
-```
-
-The goal of the first implementation milestone is feature parity, not a rewrite.
-
-## Shared controls
-
-Reader and Sticky share:
-
-- Search
-- Role filter
-- Use filter
-- Topic filter
-- Sort by
-- Asc / Desc
-- Topic click toggle
-- click the active Topic again to clear it
-- automatic scroll to results after Topic filtering
-- Zotero deep links
-- ZotLit live refresh
-- persistence of the last selected view
-- persistence of sorting
-- persistence of appearance mode
-
-## Appearance modes
-
-The established modes are:
-
-```text
-Auto | Eye | Dark
-```
-
-- **Auto** follows Obsidian's appearance.
-- **Eye** uses the existing warm low-glare palette.
-- **Dark** is the Dashboard's independent dark mode.
-
-The current UI is considered substantially complete. Avoid unnecessary visual redesign during migration.
-
-## Reader view
-
-Reader is optimized for detailed reading, filtering, and verification.
-
-Information hierarchy:
+Reader preserves the AI-first hierarchy:
 
 ```text
 role / use
@@ -167,30 +125,16 @@ paper title
 topics
 AI summary
 ORIGINAL
-short original-text preview
+collapsed original preview
 Show original ↓
 Open in Zotero ↗
 ```
 
-The AI summary is primary. Original highlight text is secondary and collapsed by default.
+Page labels remain hidden from the UI. Page and annotation identifiers may still be included in the Zotero deep link.
 
-Page labels are intentionally omitted from the visible UI because Zotero deep links already provide direct annotation navigation. Page / annotation parameters may still be retained internally when building the deep link.
+## Sticky
 
-## Sticky view
-
-Sticky is optimized for dense scanning, comparison, and idea discovery.
-
-It uses the same AI-first information hierarchy as Reader but with a denser card layout and a roughly one-line original-text preview.
-
-The old CSS-columns layout was replaced because it produced column-major visual reading order:
-
-```text
-1 4 7
-2 5 8
-3 6 9
-```
-
-The established implementation uses explicit column containers with round-robin distribution so visual order follows:
+Sticky uses explicit column containers with round-robin assignment so sorted visual order is horizontal:
 
 ```text
 1 2 3
@@ -198,7 +142,7 @@ The established implementation uses explicit column containers with round-robin 
 7 8 9
 ```
 
-Responsive targets:
+Responsive targets are:
 
 ```text
 >= 1120 px  → 4 columns
@@ -207,74 +151,29 @@ Responsive targets:
 narrower    → 1 column
 ```
 
-Desktop Obsidian should preferentially retain 3 or 4 columns. With only a few highlights, cards should spread horizontally rather than filling the first column downward before using later columns.
+A `ResizeObserver` re-renders Sticky when the pane crosses practical layout widths.
 
-## UI style
-
-The existing design direction is intentionally restrained:
-
-- Apple-inspired
-- clean
-- light shadows
-- modest corner radius
-- segmented Reader / Sticky control
-- pill-style expand/collapse controls
-- pill-style Open in Zotero action
-- consistent hover / focus behavior for selects
-- no excessive decoration
-
-Controls must reserve enough width for their labels and must not allow text to overflow.
-
-## Zotero deep links
-
-The Dashboard should continue constructing Zotero links that target the original annotation, for example using the attachment key plus annotation and optional page parameters.
-
-The visible UI does not need to show page numbers for this to work.
-
-## Data contract
-
-The Dashboard consumes the annotation schema documented in `../docs/data-contract.md`:
+## Appearance
 
 ```text
-[AI]
-中文 summary
-
-Role: ...
-Topics: ...
-Use: ...
+Auto | Eye | Dark
 ```
 
-and:
+- **Auto** follows Obsidian.
+- **Eye** uses a warm low-glare palette independently of Obsidian's current theme.
+- **Dark** forces the Dashboard dark palette independently of Obsidian's current theme.
 
-```text
-ai:done
-ai:role:*
-ai:topic:*
-ai:use:*
-```
+## Next validation step
 
-It should tolerate missing AI data, unknown tags, and future additive `ai:*` fields.
+The next step is not more feature work. It is a real integration test against the existing ZotLit v2.1.1 environment:
 
-## Non-goals
+1. load the plugin manually;
+2. confirm the ribbon opens the view;
+3. compare Reader / Sticky against Final v6;
+4. create a Zotero highlight and confirm it appears live;
+5. edit AI summary / Role / Topics / Use and confirm live refresh;
+6. delete the highlight and confirm it disappears;
+7. test Zotero deep-link navigation;
+8. check Eye / Dark and Sticky resize behavior.
 
-This plugin must not:
-
-- reimplement ZotLit;
-- create `highlights.json`;
-- create a custom SQLite highlight database;
-- require Dataview in production;
-- write back AI metadata to Zotero as part of the initial release;
-- redesign the mature Reader / Sticky UI before migration parity is reached.
-
-## Recommended first milestone
-
-1. scaffold the native Obsidian plugin;
-2. create the `ItemView` and ribbon action;
-3. detect ZotLit gracefully;
-4. port `loadRecords()` and live-change handling;
-5. port Reader / Sticky rendering and styles from Final v6;
-6. preserve filters, sort, appearance, deep links, and stored UI state;
-7. verify create / edit / delete live updates against Zotero;
-8. package for manual installation and test in a clean vault.
-
-This is the recommended first implementation target for the repository because it has the most complete existing source and the smallest behavioral migration surface.
+Any regression found there should be fixed before starting the Zotero plugin migration.

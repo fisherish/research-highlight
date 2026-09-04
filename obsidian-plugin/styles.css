@@ -42,6 +42,7 @@ body.theme-dark .rh-app,
   --sn-note-border: rgba(255,239,180,.10);
 }
 
+body.theme-dark .rh-app.rh-appearance-eye,
 .rh-app.rh-appearance-eye {
   --rh-text: #302b22;
   --rh-text-2: #655d50;
