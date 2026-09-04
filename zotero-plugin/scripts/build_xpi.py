@@ -17,6 +17,7 @@ files = [
     "src/reader.js",
     "src/batch.js",
     "src/topics.js",
+    "src/topics-groq.js",
     "prefs.js",
     "prefs.xhtml",
     "prefs.css",
