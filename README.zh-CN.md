@@ -207,12 +207,13 @@ research-highlight-toolkit/
 │  ├─ architecture.md
 │  ├─ data-contract.md
 │  └─ installation.md
+├─ LICENSE
 ├─ README.md
 └─ README.zh-CN.md
 ```
 
 ## License
 
-目前尚未选择正式的 distribution license。
+Research Highlight 采用 [Apache License 2.0](LICENSE)。
 
-在添加 `LICENSE` 之前，本仓库不应被描述为 open source 项目。
+该许可证允许使用、修改、分发和商业使用，同时要求保留必要的版权与许可证声明，并包含明确的专利授权条款。
