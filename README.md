@@ -88,6 +88,43 @@ When highlights are added, changed, or deleted in Zotero, the Dashboard refreshe
 
 See [`obsidian-plugin/README.md`](obsidian-plugin/README.md).
 
+## Quick install
+
+First install the two sync plugins: **ZotLit Companion** in Zotero and **ZotLit** in Obsidian.
+
+Then open [Releases](https://github.com/fisherish/research-highlight/releases) and download:
+
+```text
+research-highlight-ai-v*.xpi
+research-highlight-dashboard-v*.zip
+```
+
+In Zotero, open **Tools → Plugins** and install the XPI.
+
+For Obsidian, extract the Dashboard ZIP into:
+
+```text
+<your-vault>/.obsidian/plugins/
+```
+
+Then enable **Research Highlight Dashboard** in **Settings → Community plugins**.
+
+### First setup in Zotero
+
+Open **Zotero Settings → Research Highlight AI**.
+
+For a normal setup you only need to:
+
+1. choose Groq, OpenAI, or OpenRouter;
+2. paste your API key;
+3. click **Test connection**.
+
+Endpoint and Model are filled automatically. Most users do not need Advanced settings.
+
+After the test succeeds, turn on **Auto annotate new highlights** if you want new highlights processed automatically.
+
+See [`docs/installation.md`](docs/installation.md) for the full setup.
+
 ## How the data moves
 
 ```text
@@ -106,32 +143,12 @@ search, filter, review, reopen in Zotero
 
 Research Highlight does not create another highlight database and does not reimplement ZotLit's sync layer.
 
-## Model setup
-
-The Zotero plugin currently includes templates for:
-
-```text
-Groq
-OpenAI
-OpenRouter
-Custom OpenAI-compatible
-```
-
-Endpoint, API Key, and Model are editable. API keys are stored in Zotero's local preferences and are not committed to this repository.
-
-## Installation
-
-Installation steps and dependencies are documented in [`docs/installation.md`](docs/installation.md).
-
-The Zotero plugin is available through GitHub Releases and has a working automatic update channel. The Obsidian plugin already runs as a native plugin; its public distribution path is still being prepared.
-
 ## Next
 
-- simplify installation and first-run setup;
 - keep testing the supported model providers;
 - improve batch annotation, retries, and error messages;
 - add preview and confirmation to Topic Consolidation;
-- finish the public release and update flow for the Obsidian plugin;
+- keep improving the Obsidian update path;
 - improve cross-paper search and continue exploring semantic retrieval, saved views, and cross-highlight summaries.
 
 See [`docs/roadmap.md`](docs/roadmap.md) for the detailed roadmap.
