@@ -31,16 +31,34 @@ var ResearchHighlightAI = {
   },
 
   async startup() {
-    Zotero.PreferencePanes.register({
-      pluginID: this.id,
-      label: "Research Highlight AI",
-      src: "prefs.xhtml",
-      stylesheets: ["prefs.css"],
-    });
+    try {
+      Zotero.PreferencePanes.register({
+        pluginID: this.id,
+        label: "Research Highlight AI",
+        src: this.rootURI + "prefs.xhtml",
+        stylesheets: [this.rootURI + "prefs.css"],
+      });
+    } catch (error) {
+      Zotero.logError(error);
+      Zotero.debug(`[Research Highlight AI] Preference pane registration failed: ${error}`);
+    }
 
     for (const window of Zotero.getMainWindows()) this.addToWindow(window);
-    this.registerMenus();
-    this.registerNotifier();
+
+    try {
+      this.registerMenus();
+    } catch (error) {
+      Zotero.logError(error);
+      Zotero.debug(`[Research Highlight AI] Menu registration failed: ${error}`);
+    }
+
+    try {
+      this.registerNotifier();
+    } catch (error) {
+      Zotero.logError(error);
+      Zotero.debug(`[Research Highlight AI] Notifier registration failed: ${error}`);
+    }
+
     Zotero.debug(`[Research Highlight AI] Ready ${this.version}`);
   },
 
@@ -125,6 +143,8 @@ var ResearchHighlightAI = {
         if (event !== "add" || type !== "item") return;
         if (!this.getPrefBool(this.PREFS.autoAnnotate, false)) return;
 
+        Zotero.debug(`[Research Highlight AI] Auto annotate received add:item for ${ids?.length || 0} item(s)`);
+
         try {
           const items = ids?.length ? await Zotero.Items.getAsync(ids) : [];
           for (const item of items || []) {
@@ -172,13 +192,13 @@ var ResearchHighlightAI = {
   },
 
   getPrefString(key, fallback = "") {
-    const value = Zotero.Prefs.get(key);
+    const value = Zotero.Prefs.get(key, true);
     if (value === undefined || value === null || value === false) return fallback;
     return String(value).trim();
   },
 
   getPrefBool(key, fallback = false) {
-    const value = Zotero.Prefs.get(key);
+    const value = Zotero.Prefs.get(key, true);
     return typeof value === "boolean" ? value : fallback;
   },
 
