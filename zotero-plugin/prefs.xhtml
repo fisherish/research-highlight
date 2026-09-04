@@ -1,6 +1,7 @@
 <vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
       xmlns:html="http://www.w3.org/1999/xhtml"
-      class="research-highlight-ai-prefs-root">
+      class="research-highlight-ai-prefs-root"
+      onload="window.ResearchHighlightAIPrefs.init()">
   <linkset>
     <html:link rel="localization" href="research-highlight-ai.ftl"/>
   </linkset>
@@ -13,7 +14,16 @@
                    preference="extensions.researchHighlightAI.provider"
                    native="true">
         <html:option value="groq">Groq</html:option>
+        <html:option value="openai">OpenAI</html:option>
+        <html:option value="openrouter">OpenRouter</html:option>
+        <html:option value="custom">Custom (OpenAI-compatible)</html:option>
       </html:select>
+
+      <html:label data-l10n-id="research-highlight-ai-prefs-endpoint" for="research-highlight-ai-endpoint"/>
+      <html:input id="research-highlight-ai-endpoint"
+                  type="text"
+                  preference="extensions.researchHighlightAI.endpoint"
+                  native="true"/>
 
       <html:label data-l10n-id="research-highlight-ai-prefs-api-key" for="research-highlight-ai-api-key"/>
       <html:input id="research-highlight-ai-api-key"
@@ -38,8 +48,55 @@
       </html:label>
     </html:div>
 
+    <html:p class="research-highlight-ai-prefs-note" data-l10n-id="research-highlight-ai-prefs-provider-note"/>
     <html:p class="research-highlight-ai-prefs-note" data-l10n-id="research-highlight-ai-prefs-key-note"/>
     <html:p class="research-highlight-ai-prefs-note research-highlight-ai-prefs-warning"
             data-l10n-id="research-highlight-ai-prefs-auto-note"/>
   </groupbox>
+
+  <script><![CDATA[
+    window.ResearchHighlightAIPrefs = {
+      presets: {
+        groq: {
+          endpoint: "https://api.groq.com/openai/v1/chat/completions",
+          model: "qwen/qwen3.8-27b",
+        },
+        openai: {
+          endpoint: "https://api.openai.com/v1/chat/completions",
+          model: "gpt-4.1-mini",
+        },
+        openrouter: {
+          endpoint: "https://openrouter.ai/api/v1/chat/completions",
+          model: "openai/gpt-oss-20b",
+        },
+      },
+
+      init() {
+        const provider = document.getElementById("research-highlight-ai-provider");
+        if (!provider || provider.dataset.rhaiBound === "true") return;
+        provider.dataset.rhaiBound = "true";
+        provider.addEventListener("change", () => this.applyPreset(provider.value));
+      },
+
+      setBoundValue(element, value) {
+        if (!element || !value) return;
+        element.value = value;
+        element.dispatchEvent(new Event("input", { bubbles: true }));
+        element.dispatchEvent(new Event("change", { bubbles: true }));
+      },
+
+      applyPreset(providerName) {
+        const preset = this.presets[providerName];
+        if (!preset) return;
+        this.setBoundValue(
+          document.getElementById("research-highlight-ai-endpoint"),
+          preset.endpoint
+        );
+        this.setBoundValue(
+          document.getElementById("research-highlight-ai-model"),
+          preset.model
+        );
+      },
+    };
+  ]]></script>
 </vbox>
