@@ -1,11 +1,11 @@
 {
   "name": "research-highlight-ai",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": true,
   "description": "Research Highlight AI for Zotero: structured AI enrichment for literature highlights.",
   "license": "Apache-2.0",
   "scripts": {
-    "check": "node --check bootstrap.js && node --check src/core.js && node --check src/provider.js && node --check src/annotation.js && node --check src/annotation-provider.js && node --check src/reader.js && node --check src/batch.js && node --check src/topics.js && node --check src/topics-groq.js",
+    "check": "node --check bootstrap.js && node --check preferences.js && node --check src/core.js && node --check src/provider.js && node --check src/annotation.js && node --check src/annotation-provider.js && node --check src/reader.js && node --check src/batch.js && node --check src/topics.js && node --check src/topics-groq.js",
     "build": "python scripts/build_xpi.py"
   }
 }
