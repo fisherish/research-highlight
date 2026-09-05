@@ -44,20 +44,15 @@ window.ResearchHighlightAIPrefs = {
     this.model.value = this.getPrefString(this.PREFS.model, this.presets[providerName]?.model || "");
     this.autoAnnotate.checked = this.getPrefBool(this.PREFS.autoAnnotate, false);
 
-    if (providerName === "custom") this.setAdvancedVisible(true);
-    else this.setAdvancedVisible(false);
+    this.setAdvancedVisible(providerName === "custom");
 
     this.provider.addEventListener("command", () => this.onProviderChanged());
-    this.provider.addEventListener("change", () => this.onProviderChanged());
     this.apiKey.addEventListener("input", () => this.setPref(this.PREFS.apiKey, this.apiKey.value));
     this.endpoint.addEventListener("input", () => this.setPref(this.PREFS.endpoint, this.endpoint.value));
     this.model.addEventListener("input", () => this.setPref(this.PREFS.model, this.model.value));
     this.autoAnnotate.addEventListener("command", () => this.setPref(this.PREFS.autoAnnotate, Boolean(this.autoAnnotate.checked)));
-    this.autoAnnotate.addEventListener("change", () => this.setPref(this.PREFS.autoAnnotate, Boolean(this.autoAnnotate.checked)));
     this.testButton.addEventListener("command", () => void this.testConnection());
-    this.testButton.addEventListener("click", () => void this.testConnection());
     this.advancedToggle.addEventListener("command", () => this.setAdvancedVisible(this.advancedPanel.hidden));
-    this.advancedToggle.addEventListener("click", () => this.setAdvancedVisible(this.advancedPanel.hidden));
   },
 
   getPrefString(key, fallback = "") {
