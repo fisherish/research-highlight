@@ -18,19 +18,19 @@
 
 .research-highlight-ai-prefs-grid input[type="text"],
 .research-highlight-ai-prefs-grid input[type="password"],
-.research-highlight-ai-prefs-grid select {
+#research-highlight-ai-provider {
   width: 100%;
   box-sizing: border-box;
 }
 
-.research-highlight-ai-prefs-checkbox-row,
 .research-highlight-ai-prefs-test-row {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-height: 32px;
 }
 
-.research-highlight-ai-test-button {
+#research-highlight-ai-test {
   min-width: 112px;
 }
 
@@ -58,17 +58,15 @@
   line-height: 1.45;
 }
 
-.research-highlight-ai-prefs-advanced {
-  max-width: 760px;
-  margin-top: 18px;
+.research-highlight-ai-advanced-toggle {
+  margin-top: 16px;
+  align-self: flex-start;
 }
 
-.research-highlight-ai-prefs-advanced > summary {
-  cursor: pointer;
-  font-weight: 600;
-  user-select: none;
+.research-highlight-ai-prefs-advanced-panel {
+  margin-top: 4px;
 }
 
 .research-highlight-ai-prefs-advanced-grid {
-  margin-top: 14px;
+  margin-top: 10px;
 }
