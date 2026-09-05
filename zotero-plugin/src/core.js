@@ -36,6 +36,7 @@ var ResearchHighlightAI = {
         pluginID: this.id,
         label: "Research Highlight AI",
         src: this.rootURI + "prefs.xhtml",
+        scripts: [this.rootURI + "preferences.js"],
         stylesheets: [this.rootURI + "prefs.css"],
       });
     } catch (error) {
