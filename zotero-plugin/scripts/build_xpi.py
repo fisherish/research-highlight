@@ -22,6 +22,7 @@ files = [
     "src/topics.js",
     "src/topics-groq.js",
     "prefs.js",
+    "preferences.js",
     "prefs.xhtml",
     "prefs.css",
     "locale/en-US/research-highlight-ai.ftl",
