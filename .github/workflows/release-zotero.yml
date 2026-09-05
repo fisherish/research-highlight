@@ -53,6 +53,7 @@ jobs:
         run: |
           cd zotero-plugin
           node --check bootstrap.js
+          node --check preferences.js
           node --check src/core.js
           node --check src/provider.js
           node --check src/annotation.js
